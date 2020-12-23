@@ -3,9 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth')
 
 
-
 const ProfileController = require('../controllers/userProfiles')
-
 
 router.post('/new', auth, ProfileController.new)
 

@@ -414,7 +414,7 @@ module.exports = async function(options) {
         }
     } catch (e) {
       
-            console.log('Error! Unable to add Rental Provider!\n add.js line 458' + e)
+            console.log('Error! Unable to add Rental Provider!' + e)
         return {
             err: 'provider',
             message: 'Error! Unable to add Rental Provider!\n' + e,

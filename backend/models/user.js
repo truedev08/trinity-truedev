@@ -93,7 +93,6 @@ const profileSchema = new Schema({
     }
 });
 
-
 const userSchema = new Schema({
     userName: {
         type: String,

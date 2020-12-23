@@ -2,12 +2,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { API_URL, WEB_SOCKET_URL } from '../../../../../config.js';
 import { rentValues, isNiceHashMinimum} from '../../../../actions/miningOperationsActions.js';
+import { updateProfitEstimates } from '../../../../actions/updateProfitEstimates.js'
 import ToggleSwitch from '../../../helpers/toggle/ToggleSwitch';
 import MiningLight from '../../../helpers/MiningLight';
 import { connect } from 'react-redux';
 import MarketsNPools from '../../../settings/prefrences/merc/MercMode'
 import { isEqual } from 'lodash'
 import ProgressBar from '../../../helpers/ProgressBar';
+
 
 const MiningOperations = (props) => {
     const socket = useRef(null)
@@ -25,6 +27,12 @@ const MiningOperations = (props) => {
         socket.current.onopen = (e) => {
             socket.current.send(JSON.stringify({ action: 'connect' }));
         };
+    }
+
+    const runProfitEstimates = () => {
+        const userId = props.user._id
+        console.log("User ID: ", userId)
+        setInterval(async () => {props.updateProfitEstimates(userId)}, 60000)
     }
 
     useEffect(() => {
@@ -489,7 +497,7 @@ const MiningOperations = (props) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* AUTO RENTING CONTAINER */}
                     <div className="automatic-renting-container">
                         <MiningLight 
@@ -502,6 +510,11 @@ const MiningOperations = (props) => {
                             isOn={autoRent} />
 
                         <div className="automatic-renting-content">
+
+                            <button onClick={() => runProfitEstimates()}>
+                                Profit Estimates
+                            </button>
+
                             <h5>Automatic Renting</h5>
                             <div className="provider-checkbox-container">
                                 <div className="form-check">
@@ -540,7 +553,7 @@ const MiningOperations = (props) => {
                                     }} />
                                 <label className="form-check-label" htmlFor="spotProfitable">
                                     Mine only when spot profitable
-                            </label>
+                                </label>
                             </div>
                             <div className="percent-container">
                                 <PercentModal miningOperations={miningOperations} state={props} />
@@ -629,4 +642,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(MiningOperations);
+export default connect(mapStateToProps, {updateProfitEstimates})(MiningOperations);

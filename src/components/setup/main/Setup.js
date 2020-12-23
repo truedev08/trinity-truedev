@@ -453,7 +453,7 @@ const Setup = props => {
                     return [
                         data.message,
                         <button key={i} type="submit" className="btn btn-success" onClick={goToSettings}>
-                            Continue  >
+                            Continue  
                         </button>
                     ]    
                 }
@@ -473,7 +473,7 @@ const Setup = props => {
                                 Add Pool
                             </button>
                             <button type="submit" className="btn btn-success" onClick={goToSettings}>
-                                Continue  >
+                                Continue
                             </button>
                         </div>
                     ]    

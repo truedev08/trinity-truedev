@@ -12,9 +12,11 @@ const authRouter = require('./routes/auth');
 const bittrexRouter = require('./routes/bittrex');
 const rentRouter = require('./routes/rent').router;
 const userProfiles = require('./routes/userProfiles')
+const profitEstimates = require('./routes/priceEstimates')
 const passport = require('passport');
 const autoTradeRouter = require('./routes/autoTrade')
-const rentValues = require('./routes/rentValues')
+const rentValues = require('./routes/rentValues');
+const profitsEstimated = require('./profitEstimator');
 const { NODE_ENV, MONGO_URL } = process.env;
 
 const app = express();
@@ -56,6 +58,7 @@ app.use('/settings', settingsRouter);
 app.use('/auth', authRouter);
 app.use('/bittrex', bittrexRouter);
 app.use('/profile', userProfiles);
+app.use('/estimates', profitEstimates);
 app.use('/rent', rentRouter);
 app.use('/auto-trade', autoTradeRouter);
 app.use('/rent-values', rentValues);

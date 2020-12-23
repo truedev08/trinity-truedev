@@ -2,8 +2,6 @@ require('dotenv').config();
 const User = require('../models/user')
 const _ = require('lodash')
 
-
-
 module.exports = {
     new: async( req, res ) => {
         try {
