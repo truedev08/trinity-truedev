@@ -1,7 +1,6 @@
 import { PROVIDER, PERCENT_MODAL, RETURNED_RENT_VALUES } from './types';
 import { API_URL } from '../../config';
 
-
 export const rentValues = (inputs, whatToDo) => async (dispatch) =>{
     if (inputs.targetMargin === '' || inputs.profitReinvestment === '' || inputs.Xpercent === '' || inputs.token === '') return
 
@@ -13,12 +12,13 @@ export const rentValues = (inputs, whatToDo) => async (dispatch) =>{
 
     const Percent = inputs.Xpercent
     const numString = Percent+''
-
+    
     // Percent has to consist of a number 1 - 9
     if(! /[1-9]/.test(numString) ) return
-
     inputs.whatToDo = whatToDo
     inputs.to_do = 'returnSpartanBot'
+
+    const res = await axios.post(`${API_URL}/`, body, tokenConfig(getState))
 
     fetch(API_URL+'/rent-values',{
         method: 'POST',

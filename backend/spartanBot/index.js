@@ -11,7 +11,6 @@ const emitter = new Events();
 const wss = require('../routes/socket');
 const { Rent, getPriceBtcUsd, AutoRentCalculatons } = require('../helpers/rentValues');
 
-
 class Client {
     constructor(res) {
         this.res = res

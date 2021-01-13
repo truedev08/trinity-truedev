@@ -7,6 +7,9 @@ const { getCircularReplacer } = require('../spartanBot/utils')
 
 router.post('/', async (req, res)=> {
     let inputs = req.body
+    
+    console.log("reeee 02010201120210210210021", inputs);
+    
 
     let options = await Client.controller({
         userName: inputs.name,
@@ -14,12 +17,12 @@ router.post('/', async (req, res)=> {
         to_do: inputs.to_do
     }) // Attaches SpartanBot to inputs
     // console.log('OPTIONS', {...options, ...inputs})
-        if (inputs.whatToDo === 'getRentalValues') {
-            let values = await options.autoRentCalculations.niceHashCalculation({...options, ...inputs})
-            let replacedCircularData = JSON.stringify(values, getCircularReplacer());
+    if (inputs.whatToDo === 'getRentalValues') {
+        let values = await options.autoRentCalculations.niceHashCalculation({...options, ...inputs})
+        let replacedCircularData = JSON.stringify(values, getCircularReplacer());
 
-            res.send(replacedCircularData)
-        }
+        res.send(replacedCircularData)
+    }
 })
 
 module.exports = router;

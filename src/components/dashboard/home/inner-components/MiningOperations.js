@@ -32,7 +32,8 @@ const MiningOperations = (props) => {
     const runProfitEstimates = () => {
         const userId = props.user._id
         console.log("User ID: ", userId)
-        setInterval(async () => {props.updateProfitEstimates(userId)}, 60000)
+        const profitEstiamte = setInterval(async () => {props.dispatch(updateProfitEstimates(userId))}, 8000)
+        return profitEstiamte
     }
 
     useEffect(() => {
@@ -107,7 +108,7 @@ const MiningOperations = (props) => {
                 profitReinvestment: profitReinvestment,
                 updateUnsold: updateUnsold,
                 dailyBudget: dailyBudget,
-                autoRent: autoRent.on,
+                //autoRent: autoRent.off,
                 spot: autoRent.mode.spot,
                 alwaysMineXPercent: autoRent.mode.alwaysMineXPercent.on,
                 Xpercent: autoRent.mode.alwaysMineXPercent.Xpercent,
@@ -188,13 +189,8 @@ const MiningOperations = (props) => {
         }
     }, [autoRent]);
 
-
-    useEffect(() => {
-        const rentValues = props.rentValues
-        if (rentValues === undefined || !rentValues.limit) return
-   
-        setOperations({ ...miningOperations, ...rentValues })
-    }, [props.rentValues])
+ 
+    
 
     const processReturnData = (data) => {
         let newValues = {}
@@ -313,7 +309,6 @@ const MiningOperations = (props) => {
                 break;
             case "NiceHashProvider":
                 if (err.providerCheckbox ) setError({ providerCheckbox : false })
-
                 setOperations({ ...miningOperations, NiceHashProvider: !NiceHashProvider })
                 break;
             case "spot":
@@ -347,6 +342,17 @@ const MiningOperations = (props) => {
         setOperations({ ...miningOperations, Xpercent: value })
    
     }
+
+    useEffect(() => {
+        if (!autoRent) {
+            console.log("Not Currently Mining");
+
+        }
+        else { 
+            console.log("Now Mining");
+            runProfitEstimates()
+        }
+      }, [autoRent])
 
     const showPercentInput = (e) => {
         let value = e.target.value
@@ -490,7 +496,7 @@ const MiningOperations = (props) => {
                             <label htmlFor="basic-url">Daily Budget USD</label>
                             <div className="input-group">
                                 <input type="text" className="form-control" id="dailyBudget" aria-label="Daily budget"
-                                    onChange={(e) => { updateInputs(e) }} value={miningOperations.dailyBudget} />
+                                    onChange={(e) => { updateInputs(e) }} value={ miningOperations.dailyBudget } />
                                 <div className="input-group-append">
                                     <span className="daily-budget-text">Edit</span>
                                 </div>
@@ -504,18 +510,15 @@ const MiningOperations = (props) => {
                             mining={mining} 
                             autoRent={autoRent} />
                         <ToggleSwitch
-                            handleChange={(e) => { updateInputs(e) }}
+                            handleChange={(e) => { updateInputs(e)}}
                             id={"autoRent"}
                             htmlFor={"autoRent"}
                             isOn={autoRent} />
 
                         <div className="automatic-renting-content">
 
-                            <button onClick={() => runProfitEstimates()}>
-                                Profit Estimates
-                            </button>
-
                             <h5>Automatic Renting</h5>
+
                             <div className="provider-checkbox-container">
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" value={MRRProvider} id="MRRProvider"
@@ -543,6 +546,7 @@ const MiningOperations = (props) => {
                                 <span className="error-arrow"></span>
                                 <p>Need at least one checked before getting values</p>
                             </div>
+                            
                             <div className="form-check">
                                 <input className="form-check-input" type="radio" id="spot"
                                     value={spot}
@@ -642,4 +646,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps, {updateProfitEstimates})(MiningOperations);
+export default connect(mapStateToProps)(MiningOperations);

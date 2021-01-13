@@ -9,7 +9,7 @@ import './home.css'
 //todo: Tables - show current 5; if there is more than 5, 'Show more'. If none - display 'none'
 
 
-const Home = props => {
+const Home = () => {
     return (
         <main>   
             <Wallet />

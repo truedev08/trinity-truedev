@@ -99,6 +99,7 @@ const Profile = (props) => {
     }, [profileModal])
 
     const handleSelect = e =>{
+        
         setValue(e.target.value)
 
         switch(e.target.value){
@@ -139,72 +140,71 @@ const Profile = (props) => {
             <option value={profile.name} key={i}>
                     {profile.name}
             </option>)  
-    })
-}
+        })
+    }
 
     return (    
         <>    
             {profileModal && <NewProfile
-                    handleClick={
-                        () => {setProfileModal(!profileModal)}}
-                    handleSubmit={(e) => handleSubmit(e)}
-                    handleInputChange={(e) => {setNewProfile({
-                        ...newProfile,
-                        name: e.target.value
-                    }) 
-                        setError(null)
-                        }
+                handleClick={
+                    () => {setProfileModal(!profileModal)}}
+                handleSubmit={(e) => handleSubmit(e)}
+                handleInputChange={(e) => {setNewProfile({
+                    ...newProfile,
+                    name: e.target.value
+                }) 
+                    setError(null)
                     }
-                    handleRadioChange={(e) => setNewProfile({
-                        ...newProfile,
-                        token: e.target.value
-                    })}
-                    error={error}
-                    />}
-        <div className="card profile">
-            <div className="card-body profile-container">
-            <div style={{marginBottom: '1rem'}}>
-            <label htmlFor="profile-select" >Active Profile:</label>
-                <select name="profiles" id="profile-select" 
-                    value={value}
-                    onChange={(e) => handleSelect(e)}>
-                <option value={''} disabled >Select profile</option>
-                <Dropdown />
-                <option value={'new'}>
-                        add new
-                </option>
-                </select>
-                {selectedProfile &&
-                    <button onClick={handleDelete} className="btn btn-danger">Delete</button>
-                }   
-            </div>
-            <div style={{marginBottom: '1rem'}}>
-            <label htmlFor="profile-token" >Profile Token:</label>
-                    {selectedProfile ? selectedProfile.token : null}
-            </div>
-            <div style={{display: 'flex', alignItems: 'center'}}>                
-            <label htmlFor="profile-notes" >Profile Notes:</label>
-                <textarea  id="profile-notes" name="profile-notes"
-                    placeholder='notes'
-                    onChange={(e) =>  {setNotes(e.target.value)
-                        setSelectedProfile({...selectedProfile, notes: e.target.value})
-                        }
-                    }
-                    onFocus={e => setFocus(!focus)}
-                    onBlur={e => setBlur(!blur)}
-                    value={selectedProfile ? selectedProfile.notes : notes}
-                />   
-            </div>
-            </div>
-        </div>      
-        <ActiveRentals profile={selectedProfile}
-        />
-        <MiningOperations profile={selectedProfile}
-            updateProfile={props.updateProfile}
-        />
+                }
+                handleRadioChange={(e) => setNewProfile({
+                    ...newProfile,
+                    token: e.target.value
+                })}
+                error={error}
+            />}
+            <div className="card profile">
+                <div className="card-body profile-container">
+                    <div style={{marginBottom: '1rem'}}>
+                        <label htmlFor="profile-select" >Active Profile:</label>
+                        <select name="profiles" id="profile-select" 
+                            value={value}
+                            onChange={(e) => handleSelect(e)}>
+                                <option value={''} disabled >Select profile</option>
+                                <Dropdown />
+                                <option value={'new'}>
+                                    add new
+                                </option>
+                        </select>
+                        {selectedProfile &&
+                            <button onClick={handleDelete} className="btn btn-danger">Delete</button>
+                        }   
+                    </div>
+                    <div style={{marginBottom: '1rem'}}>
+                    <label htmlFor="profile-token" >Profile Token:</label>
+                            {selectedProfile ? selectedProfile.token : null}
+                    </div>
+                    <div style={{display: 'flex', alignItems: 'center'}}>                
+                    <label htmlFor="profile-notes" >Profile Notes:</label>
+                        <textarea  id="profile-notes" name="profile-notes"
+                            placeholder='notes'
+                            onChange={(e) =>  {setNotes(e.target.value)
+                                setSelectedProfile({...selectedProfile, notes: e.target.value})
+                                }
+                            }
+                            onFocus={e => setFocus(!focus)}
+                            onBlur={e => setBlur(!blur)}
+                            value={selectedProfile ? selectedProfile.notes : notes}
+                        />   
+                    </div>
+                </div>
+            </div>      
+            <ActiveRentals profile={selectedProfile}
+            />
+            <MiningOperations profile={selectedProfile}
+                updateProfile={props.updateProfile}
+            />
         </>
-    
-)
+    )
 }
 
 const mapStateToProps = state => {
