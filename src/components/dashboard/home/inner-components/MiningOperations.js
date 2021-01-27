@@ -29,10 +29,11 @@ const MiningOperations = (props) => {
         };
     }
 
-    const runProfitEstimates = () => {
+    const runProfitEstimates = async () => {
         const userId = props.user._id
         console.log("User ID: ", userId)
-        const profitEstiamte = setInterval(async () => {props.dispatch(updateProfitEstimates(userId))}, 8000)
+        //const profitEstiamte = setInterval(async () => {props.dispatch(updateProfitEstimates(userId))}, 8000)
+        const profitEstiamte = await props.dispatch(updateProfitEstimates(userId))
         return profitEstiamte
     }
 
@@ -215,13 +216,26 @@ const MiningOperations = (props) => {
         setOperations({ ...miningOperations, ...newValues })
     }
 
+    const test = async () => {
+        await fetch('https://api2.nicehash.com/main/api/v2/public/buy/info', {
+            method: 'GET',
+            mode: 'no-cors',
+        }).then((res) => {
+            return res.json()
+        }).then((data) => {
+            console.log("Test: ", data);
+        }).catch((err) => {
+            console.log(err); 
+        })
+    }
+
     const rent = (options) => {
         options.to_do = 'rent'
         options.userId = props.user._id
         options.message = []
         options.update = false
-
-        fetch(API_URL + '/rent', {
+        
+        fetch(API_URL + '/truedevSpotProfitOrder/createOrder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -515,6 +529,11 @@ const MiningOperations = (props) => {
                             htmlFor={"autoRent"}
                             isOn={autoRent} />
 
+                        <button
+                            onClick={runProfitEstimates}
+                        >
+                            Update Conditions.
+                        </button>
                         <div className="automatic-renting-content">
 
                             <h5>Automatic Renting</h5>

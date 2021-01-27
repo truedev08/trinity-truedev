@@ -1,6 +1,8 @@
 import { PROVIDER, PERCENT_MODAL, RETURNED_RENT_VALUES } from './types';
 import { API_URL } from '../../config';
 
+const axios = require('axios')
+
 export const rentValues = (inputs, whatToDo) => async (dispatch) =>{
     if (inputs.targetMargin === '' || inputs.profitReinvestment === '' || inputs.Xpercent === '' || inputs.token === '') return
 

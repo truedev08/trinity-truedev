@@ -16,10 +16,20 @@ const profitEstimates = require('./routes/priceEstimates')
 const passport = require('passport');
 const autoTradeRouter = require('./routes/autoTrade')
 const rentValues = require('./routes/rentValues');
+const truedevSpotProfitOrder = require('./routes/truedevSpotProfitOrder');
 const profitsEstimated = require('./profitEstimator');
 const { NODE_ENV, MONGO_URL } = process.env;
+var cors = require("cors");
+
 
 const app = express();
+
+app.use(cors())
+
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 mongoose
     .connect(MONGO_URL, {
@@ -62,6 +72,7 @@ app.use('/estimates', profitEstimates);
 app.use('/rent', rentRouter);
 app.use('/auto-trade', autoTradeRouter);
 app.use('/rent-values', rentValues);
+app.use('/truedevSpotProfitOrder', truedevSpotProfitOrder)
 
 if(NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../dist')))
