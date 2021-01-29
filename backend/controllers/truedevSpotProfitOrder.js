@@ -14,6 +14,21 @@ const createOrder = async(req, res) => {
   try {
     let statusCode = (await requestStatusCode()).botStatusCode;
 
+    console.log("look at this: ", req.body)
+
+    const body = {
+      //STANDARD | FIXED
+      type: req.body.type,
+      limit: req.body.limit,
+      id: req.body.userId,
+      price: req.body.price,
+      marketFactor: "TH",
+      displayMarketFactor: req.body.displayMarketFactor,
+      amount: req.body.amount,
+      market: "EU",
+      algorithm: "KAWPOW"
+    }
+    /*
     const body = {
       //STANDARD | FIXED
       type: "STANDARD",
@@ -26,8 +41,11 @@ const createOrder = async(req, res) => {
       //market: 'EU',
       algorithm: "KAWPOW"
     }
+    */
 
     let activeRental = (await requestActiveRental()).alive;
+
+    statusCode = 1;
 
     if (!activeRental && statusCode==1 || statusCode==2) {
       console.log("Creating Order");
