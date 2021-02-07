@@ -2358,7 +2358,7 @@ class RentalPrediction {
         // let StopMonitoringForRewardsLimit = CurrentRental.StopMonitoringForRewardsLimit
         // // let botStatusCode = (RewardsCompositeCode === 1) ? ((projectedProfitable)?((projectedAboveUsersMinMargin)?(1):(2)):(3)) : ((RewardsCompositeCode === 0)?((StopMonitoringForRewardsLimit < TimeSinceRentalEnded)?(6):((projectedProfitable)?((projectedAboveUsersMinMargin)?(1):(2)):(3))):('error'))
 
-        return {botStatusCode, projectedProfitable, projectedAboveUsersMinMargin}
+        return {botStatusCode, RentalCompositeStatusCode, RewardsCompositeCode, projectedProfitable, projectedAboveUsersMinMargin}
       }
       else if (RentalCompositeStatusCode > 0) { // something other than no rental
         if (RentalCompositeStatusCode > 3) { // RentalCompositeStatusCode is 4 or above, Dead or Down

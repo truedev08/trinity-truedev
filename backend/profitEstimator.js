@@ -61,7 +61,7 @@ async function profitsEstimated() {
     let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
       
     let currentRental = await rentalProvider.getcurrentrental(currentCondition)
-        // let rewardsBeforeRentalStart = currentCondition.rewardsTotal
+    //let rewardsBeforeRentalStart = currentCondition.rewardsTotal
     let rewardsBeforeRentalStart = 276298.70399977
     let RentalCompositeStatusCode = (currentRental === undefined) ? (9) : (currentRental.RentalCompositeStatusCode)
     let RewardsCompositeCode = (currentCondition === undefined) ? (9) : (currentCondition.RewardsCompositeCode)
@@ -76,11 +76,10 @@ async function profitsEstimated() {
     let minMargin = .10
     console.table(BestArbitrageCurrentConditions)
     let botStatus = await rentalProvider.botstatus(RentalCompositeStatusCode, RewardsCompositeCode, currentCondition, currentRental, LiveEstimatesFromMining, MinerSubStatusCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode, BestArbitrageCurrentConditions, minMargin)
-
+    //console.log("Include some jibberish: ", botStatus);
+    
     //console.table(res);
     let result = await updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions)
-
-    
 
     return result
 }
@@ -101,8 +100,6 @@ myPromise().then(res => { console.log(res)}).catch(err => { console.log(error)})
 async function updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions) {
   //const { BotStatusCode, projectedProfitable, projectedAboveUsersMinMargin } = await profitEstimation
   
-  
-
   return { botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions}
 }
 

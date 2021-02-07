@@ -96,6 +96,7 @@ const requestActiveRental = async () => {
     let orderDetails = await NiceHashOrder.getOrders("KAWPOW", "USA")
 
     console.log("Order Details", orderDetails.id)
+    console.log("Full: ", orderDetails)
     return orderDetails.id
   } catch (error) {
     console.log(error);

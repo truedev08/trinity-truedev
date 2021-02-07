@@ -9,10 +9,14 @@ module.exports = {
       
       let estimates = await profitsEstimated()
 
+      //console.log("These are the estimates", estimates);
+    
       const profitEstimate = new ProfitEstimate({
         userId: req.body.user.id,
         time: Date.now().toString(),
         botStatusCode: estimates.botStatus.botStatusCode,
+        RentalCompositeStatusCode: estimates.botStatus.RentalCompositeStatusCode,
+        RewardsCompositeCode: estimates.botStatus.RewardsCompositeCode,
         projectedProfitable: estimates.botStatus.projectedProfitable,
         projectedAboveUsersMinMargin: estimates.botStatus.projectedAboveUsersMinMargin,
         actualNetworkPercent: estimates.LiveEstimatesFromMining.actualNetworkPercent,

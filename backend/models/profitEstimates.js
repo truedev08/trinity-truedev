@@ -16,6 +16,14 @@ const profitEstimateSchema = new Schema({
       type: Number,
       default: undefined
   },
+  RewardsCompositeCode: {
+    type: Number,
+    default: undefined
+  },
+  RentalCompositeStatusCode: {
+    type: Number,
+    default: undefined
+  },
   projectedProfitable: {
       type: Boolean,
       default: undefined
