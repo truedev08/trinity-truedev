@@ -3,11 +3,25 @@ const ProfitEstimate = require('../models/profitEstimates')
 const _ = require('lodash')
 const profitsEstimated = require('../profitEstimator')
 
+const User = require('../models/user');
+
 module.exports = {
   updateProfitEstimates: async( req, res ) => {
     try {
-      
-      let estimates = await profitsEstimated()
+      console.log("something", req.body);
+
+
+      let userData = await User.findById({ _id: req.body.user.id})
+      // ToDo Truedev change line below to address from profile from Profile.js
+      let userKeys = {address: process.env.RAVEN_ADDRESS }
+
+      for (let keys of userData.providerData) {
+        if (keys.rental_provider == "NiceHash") {
+          userKeys.niceHashKeys = keys;
+        }
+      }
+
+      let estimates = await profitsEstimated(userKeys)
 
       const profitEstimate = new ProfitEstimate({
         userId: req.body.user.id,
@@ -34,11 +48,15 @@ module.exports = {
         ExpectedPoolDominanceMultiplier: estimates.BestArbitrageCurrentConditions.ExpectedPoolDominanceMultiplier
       })
 
+      console.log("ayyy bro 123123");
+
       await profitEstimate.save();
       
       res.status(200).json({
           success: 'Profit Estimates Updated!',
       });
+
+      console.log("ayyy broski");
 
       return estimates
       

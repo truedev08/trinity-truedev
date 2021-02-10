@@ -1,17 +1,33 @@
 const NiceHashApi = require('nicehash-api')
 
+const User = require('../models/user')
+
 require('dotenv').config();
-const { NH_API_KEY, NH_API_SECRET, NH_ORG_ID } = process.env;
+//const { NH_API_KEY, NH_API_SECRET, NH_ORG_ID } = process.env;
 
 const ProfitEstimate = require('../models/profitEstimates');
+const { keys } = require('lodash');
 //const SpotProfitOrder = require('../controllers/truedevSpotProfitOrder')
 
-const NiceHashOrder = new NiceHashApi.default({api_key: NH_API_KEY, api_secret: NH_API_SECRET, api_id: NH_ORG_ID});
-
-let orderId;
 
 const createOrder = async(req, res) => {
   try {
+    let orderId;
+
+    console.log(req.body.userId);
+
+    let providerData = (await User.findById({ _id: req.body.userId})).providerData
+
+    let niceHashKeys
+
+    for (let keys of providerData) {
+      if (keys.rental_provider == "NiceHash") {
+        niceHashKeys = keys;
+      }
+    }
+
+    const NiceHashOrder = new NiceHashApi.default({api_key: niceHashKeys.api_key, api_secret: niceHashKeys.api_secret, api_id: niceHashKeys.api_id});
+
     let statusCode = (await requestStatusCode()).botStatusCode;
 
     const body = {
@@ -27,14 +43,16 @@ const createOrder = async(req, res) => {
       algorithm: "KAWPOW"
     }
 
-    let activeRental = (await requestActiveRental()).alive;
+    let activeRental = (await requestActiveRental(orderId, NiceHashOrder)).alive;
 
-    if (!activeRental && statusCode==1 || statusCode==2) {
+    statusCode = 1;
+
+    if (!activeRental && (statusCode==1 || statusCode==2)) {
       console.log("Creating Order");
       orderId = (await NiceHashOrder.createOrder(body)).id
     } else if (!activeRental && statusCode==3) {
       console.log("not renting. Status Code 3");
-    } else if (activeRental && statusCode==1 || statusCode==2) {
+    } else if (activeRental && (statusCode==1 || statusCode==2)) {
       console.log("not renting. Status Code 1 or 2");
     } else if (activeRental && statusCode==3) {
       console.log("not renting. Status Code 3");
@@ -61,11 +79,11 @@ const requestStatusCode = async () => {
     return currentBotStatus
   } catch (error) {
     console.log(error);
-    
+    return {botStatusCode: 0}
   }
 }
 
-const requestActiveRental = async () => {
+const requestActiveRental = async (orderId, NiceHashOrder) => {
   console.log("Order ID", orderId);
   /*
   if (orderId == undefined) {
