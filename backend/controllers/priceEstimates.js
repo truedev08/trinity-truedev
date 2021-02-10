@@ -8,9 +8,6 @@ const User = require('../models/user');
 module.exports = {
   updateProfitEstimates: async( req, res ) => {
     try {
-      console.log("something", req.body);
-
-
       let userData = await User.findById({ _id: req.body.user.id})
       // ToDo Truedev change line below to address from profile from Profile.js
       let userKeys = {address: process.env.RAVEN_ADDRESS }
@@ -47,16 +44,11 @@ module.exports = {
         NetworkPercentToRent: estimates.BestArbitrageCurrentConditions.NetworkPercentToRent,
         ExpectedPoolDominanceMultiplier: estimates.BestArbitrageCurrentConditions.ExpectedPoolDominanceMultiplier
       })
-
-      console.log("ayyy bro 123123");
-
       await profitEstimate.save();
       
       res.status(200).json({
           success: 'Profit Estimates Updated!',
       });
-
-      console.log("ayyy broski");
 
       return estimates
       
