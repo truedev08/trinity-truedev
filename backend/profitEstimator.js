@@ -51,12 +51,12 @@ async function profitsEstimated(userSettings) {
     api_id: userSettings.niceHashKeys.api_id,
     name: 'NiceHash'
   });
+
+  // Nicehash knows the worker address for a specific pool. Consider using that?
   let UserInput = userinput(workerAddress)
   await rentalProvider.setup(UserInput)
-  console.log("ayyy");
   
   let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
-  console.log("ayyy brother");
   let currentRental = await rentalProvider.getcurrentrental(currentCondition)
   let rewardsBeforeRentalStart = currentCondition.rewardsTotal
   //let rewardsBeforeRentalStart = 276298.70399977

@@ -1250,7 +1250,6 @@ class RentalPrediction {
 
   async getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour) {
     let _this = this
-    console.log("provider", this.provider);
     
     try{
       let UsersBalance = await this.provider.provider.getBalance();

@@ -14,11 +14,9 @@ const createOrder = async(req, res) => {
   try {
     let orderId;
 
-    console.log(req.body.userId);
-
-    let providerData = (await User.findById({ _id: req.body.userId})).providerData
-
-    let niceHashKeys
+    let providerUser = await User.findById({ _id: req.body.userId})
+    let providerData = providerUser.providerData;
+    let niceHashKeys;
 
     for (let keys of providerData) {
       if (keys.rental_provider == "NiceHash") {
@@ -26,15 +24,21 @@ const createOrder = async(req, res) => {
       }
     }
 
+    console.log("Connecting to nicehash");
     const NiceHashOrder = new NiceHashApi.default({api_key: niceHashKeys.api_key, api_secret: niceHashKeys.api_secret, api_id: niceHashKeys.api_id});
+    
 
+    console.log("Status Fetching");
     let statusCode = (await requestStatusCode()).botStatusCode;
 
+    console.log("Setting Body");
+
+    // Fix this to listen to user input instead of being 99% hardcoded
     const body = {
       //STANDARD | FIXED
       type: "STANDARD",
       limit: 0.001,
-      id: "d2aaa943-2fce-4f9c-8b72-2fa389b901c1",
+      id: '',
       price: 0.1,
       marketFactor: 1000000000000,
       displayMarketFactor: "TH",
@@ -43,13 +47,27 @@ const createOrder = async(req, res) => {
       algorithm: "KAWPOW"
     }
 
+
+    // Replace this with a way for a user to pick the specific pool they want to use.
+    console.log("Fetching pools");
+    let pools = (await NiceHashOrder.getPools()).list;
+    for (pool of pools) {
+      if (pool.algorithm == body.algorithm && pool.inMoratorium == false) {
+        body.id = pool.id;
+        break
+      }
+    }
+
+    console.log(body);
+
+    console.log("Fetching active orders");
     let activeRental = (await requestActiveRental(orderId, NiceHashOrder)).alive;
 
-    statusCode = 1;
-
+    //statusCode = 1; // Force a rental
     if (!activeRental && (statusCode==1 || statusCode==2)) {
       console.log("Creating Order");
       orderId = (await NiceHashOrder.createOrder(body)).id
+      console.log("Successfully created order");
     } else if (!activeRental && statusCode==3) {
       console.log("not renting. Status Code 3");
     } else if (activeRental && (statusCode==1 || statusCode==2)) {
