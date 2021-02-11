@@ -1266,6 +1266,8 @@ class RentalPrediction {
       let orderBookScrypt = await this.provider.provider.getOrderBook('SCRYPT')
       let totalSpeedScryptUSA = orderBookScrypt.stats.USA.totalSpeed;
       let totalSpeedScryptEU = orderBookScrypt.stats.EU.totalSpeed;
+      //let PriceRentalStandardKawpowUSA = Math.round(( (10000 * summariesKawpowUSA.summaries['USA,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
+      //let PriceRentalStandardKawpowEU = Math.round(( (10000 * summariesKawpowEU.summaries['EU,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
       let PriceRentalStandardKawpowUSA = Math.round(( (10000 * summariesKawpowUSA.summaries['USA,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
       let PriceRentalStandardKawpowEU = Math.round(( (10000 * summariesKawpowEU.summaries['EU,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
       let PriceRentalStandardScryptUSA = Math.round(( 10000 * summariesScryptUSA.summaries['USA,SCRYPT'].payingPrice )*1e4)/1e4
@@ -1475,7 +1477,7 @@ class RentalPrediction {
                     let avgBlockTime = data.nodes[0].avgBlockTime
                     // let poolluck = data.luck
                     // console.log(data)
-                      resolve({networkhashps, Networkhashrate, Poolhashrate, blockheight, avgBlockTime});
+                    resolve({networkhashps, Networkhashrate, Poolhashrate, blockheight, avgBlockTime});
                   });
                 }
               })
@@ -2345,7 +2347,7 @@ class RentalPrediction {
 
     try{
       let UsersRequestedMargin = _this.UserInput.minMargin 
-      // console.table(LiveEstimatesFromMining)
+      console.table(LiveEstimatesFromMining)
       let currentlyProfitable = (LiveEstimatesFromMining === undefined) ? (false) : (LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt > 0)
       let currentlyAboveUsersMinMargin = (LiveEstimatesFromMining === undefined) ? (false) : (LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt > _this.UserInput.minMargin)
       if (RentalCompositeStatusCode === 0) { // no rental
