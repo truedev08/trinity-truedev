@@ -234,6 +234,7 @@ const MiningOperations = (props) => {
         options.userId = props.user._id
         options.message = []
         options.update = false
+        console.log(options);
         
         fetch(API_URL + '/truedevSpotProfitOrder/createOrder', {
             method: 'POST',

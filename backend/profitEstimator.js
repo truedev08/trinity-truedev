@@ -58,12 +58,13 @@ async function profitsEstimated(userSettings) {
   
   let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
   let currentRental = await rentalProvider.getcurrentrental(currentCondition)
-  let rewardsBeforeRentalStart = currentCondition.rewardsTotal
-  //let rewardsBeforeRentalStart = 276298.70399977
+  //let rewardsBeforeRentalStart = currentCondition.rewardsTotal
+  let rewardsBeforeRentalStart = 276298.70399977
   let RentalCompositeStatusCode = (currentRental === undefined) ? (9) : (currentRental.RentalCompositeStatusCode)
   let RewardsCompositeCode = (currentCondition === undefined) ? (9) : (currentCondition.RewardsCompositeCode)
   // let LiveEstimatesFromMining = rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)
   let LiveEstimatesFromMining = await rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)
+  console.log("LiveEstimatesFromMining")
   console.table(LiveEstimatesFromMining)
   let MinerSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.MinerSubStatusCode)
   let RoundSharesSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.RoundSharesSubStatusCode)
@@ -71,13 +72,14 @@ async function profitsEstimated(userSettings) {
   let NetworkPercent;
   let BestArbitrageCurrentConditions = await rentalProvider.bestarbitragecurrentconditions(NetworkPercent, UserInput, tokensPerBlock, blocksPerHour, currentCondition)
   let minMargin = .10
+  console.log("BestArbitrageCurrentConditions")
   console.table(BestArbitrageCurrentConditions)
   let botStatus = await rentalProvider.botstatus(RentalCompositeStatusCode, RewardsCompositeCode, currentCondition, currentRental, LiveEstimatesFromMining, MinerSubStatusCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode, BestArbitrageCurrentConditions, minMargin)
 
   //console.table(res);
   let result = await updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions)
 
-  console.log("ayyy bro");
+  //console.log("ayyy bro");
 
   return result
 }

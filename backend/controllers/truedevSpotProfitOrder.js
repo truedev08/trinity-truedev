@@ -34,19 +34,24 @@ const createOrder = async(req, res) => {
     console.log("Setting Body");
 
     // Fix this to listen to user input instead of being 99% hardcoded
+
+    console.table(req.body);
+
+    const currentStatus = await ProfitEstimate.collection.findOne({}, {sort:{$natural:-1}})
+
     const body = {
       //STANDARD | FIXED
-      type: "STANDARD",
-      limit: 0.001,
+      type: req.body.type,
+      limit: currentStatus.HashrateToRent,
       id: '',
-      price: 0.1,
+      price: currentStatus.RentalHashPrice,
       marketFactor: 1000000000000,
       displayMarketFactor: "TH",
-      amount: 0.001,
+      amount: 0.005,
+      //amount: req.body.amount,
       //market: 'EU',
       algorithm: "KAWPOW"
     }
-
 
     // Replace this with a way for a user to pick the specific pool they want to use.
     console.log("Fetching pools");
@@ -58,14 +63,13 @@ const createOrder = async(req, res) => {
       }
     }
 
-    console.log(body);
-
     console.log("Fetching active orders");
     let activeRental = (await requestActiveRental(orderId, NiceHashOrder)).alive;
 
-    //statusCode = 1; // Force a rental
+    statusCode = 1; // Force a rental
     if (!activeRental && (statusCode==1 || statusCode==2)) {
       console.log("Creating Order");
+      console.table(body)
       orderId = (await NiceHashOrder.createOrder(body)).id
       console.log("Successfully created order");
     } else if (!activeRental && statusCode==3) {

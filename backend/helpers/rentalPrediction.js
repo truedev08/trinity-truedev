@@ -1830,7 +1830,7 @@ class RentalPrediction {
       async function minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration) {
         let BittrexWithdrawalFee = 0.00005;
         let BittrexMinWithdrawal = 0.00015;
-        let nicehashMinRentalCost = 0.002;
+        let nicehashMinRentalCost = 0.005;
         let MinPercentFromNHMinAmount = Math.round((nicehashMinRentalCost / (((Networkhashrate * PriceRentalStandard) / 24) * minDuration + nicehashMinRentalCost)) * 1e6 ) / 1e6;
 
         async function MinPercentFromNHMinLimitCalc(props) {
@@ -2346,7 +2346,7 @@ class RentalPrediction {
 
     try{
       let UsersRequestedMargin = _this.UserInput.minMargin 
-      console.table(LiveEstimatesFromMining)
+      //console.table(LiveEstimatesFromMining)
       let currentlyProfitable = (LiveEstimatesFromMining === undefined) ? (false) : (LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt > 0)
       let currentlyAboveUsersMinMargin = (LiveEstimatesFromMining === undefined) ? (false) : (LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt > _this.UserInput.minMargin)
       if (RentalCompositeStatusCode === 0) { // no rental
@@ -2367,7 +2367,7 @@ class RentalPrediction {
           if (RentalCompositeStatusCode === 7) {
             let projectedProfitable = (BestArbitrageCurrentConditions === undefined) ? (false) : (BestArbitrageCurrentConditions.ProjectedProfitMargin > 0)
             let projectedAboveUsersMinMargin = (BestArbitrageCurrentConditions === undefined) ? (false) : (BestArbitrageCurrentConditions.ProjectedProfitMargin > minMargin)    
-            let botStatusCode = (projectedProfitable) ? ( (projectedAboveUsersMinMargin) ? (1):(2)) : (3)
+            let botStatusCode = (projectedProfitable) ? ( (projectedAboveUsersMinMargin) ? (1):(2)):(3)
             console.log(RentalCompositeStatusCode, RewardsCompositeCode, botStatusCode)
             return {botStatusCode, projectedProfitable, projectedAboveUsersMinMargin}   
           }
@@ -2402,7 +2402,7 @@ class RentalPrediction {
           // let TimeSinceRentalEnded = CurrentTime - RentalEndTime
           // let StopMonitoringForRewardsLimit = CurrentRental.StopMonitoringForRewardsLimit
           let botStatusCode = (RewardsCompositeCode === 1) ? ((currentlyProfitable)?((currentlyAboveUsersMinMargin)?(1):(2)):(3)) : ((RewardsCompositeCode === 0)?((StopMonitoringForRewardsLimit < TimeSinceRentalEnded)?(6):((currentlyProfitable)?((currentlyAboveUsersMinMargin)?(1):(2)):(3))):('error'))
-            console.log(RentalCompositeStatusCode, RewardsCompositeCode, botStatusCode)
+          console.log(RentalCompositeStatusCode, RewardsCompositeCode, botStatusCode)
           return {botStatusCode, RewardsCompositeCode , currentlyProfitable, currentlyAboveUsersMinMargin, RentalEndTime, StopMonitoringForRewardsLimit}
         }
       }
