@@ -1265,8 +1265,14 @@ class RentalPrediction {
       let orderBookScrypt = await this.provider.provider.getOrderBook('SCRYPT')
       let totalSpeedScryptUSA = orderBookScrypt.stats.USA.totalSpeed;
       let totalSpeedScryptEU = orderBookScrypt.stats.EU.totalSpeed;
-      let PriceRentalStandardKawpowUSA = Math.round(( (10000 * summariesKawpowUSA.summaries['USA,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
-      let PriceRentalStandardKawpowEU = Math.round(( (10000 * summariesKawpowEU.summaries['EU,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
+
+      let NicehashMins = await nicehashMins()
+          
+      let nicehashAlgoDownstep = NicehashMins.down_step
+
+      let StayCompetitive = - (nicehashAlgoDownstep) * 2
+      let PriceRentalStandardKawpowUSA = Math.round(( (10000 * summariesKawpowUSA.summaries['USA,KAWPOW'].payingPrice) + StayCompetitive )*1e4)/1e4
+      let PriceRentalStandardKawpowEU = Math.round(( (10000 * summariesKawpowEU.summaries['EU,KAWPOW'].payingPrice) + StayCompetitive )*1e4)/1e4
       let PriceRentalStandardScryptUSA = Math.round(( 10000 * summariesScryptUSA.summaries['USA,SCRYPT'].payingPrice )*1e4)/1e4
       let PriceRentalStandardScryptEU = Math.round(( 10000 * summariesScryptEU.summaries['EU,SCRYPT'].payingPrice )*1e4)/1e4
       // console.log('PriceRentalStandardKawpowUSA:', PriceRentalStandardKawpowUSA)
@@ -1825,10 +1831,59 @@ class RentalPrediction {
       let HourlyMiningCostInBtc = Calculations.HourlyMiningCostInBtc;
       let HourlyMiningValueInBtc = Calculations.HourlyMiningValueInBtc;
 
+      async function nicehashMins(tokenAlgo) {
+        return await new Promise((resolve, reject) => {
+            https
+            .get(
+                'https://api2.nicehash.com/main/api/v2/public/buy/info',
+                (response) => {
+                    let body = ''
+                    response.on('data', (chunk) => {
+                        body += chunk;
+                    });
+                    response.on('end', () => {
+                    let data = JSON.parse(body)
+                    if(!data) 
+                      console.log('Something wrong with the api or syntax');
+                
+                    // let NicehashMins = data;
+                    let algos = data.miningAlgorithms.length
+                    let algo;
+                    let loop = 0
+                    while (algo != 52) {
+                        algo = data.miningAlgorithms[loop].algo;
+                        loop += 1;
+                    }
+                    let NicehashMinsForRvn = data.miningAlgorithms[loop-1]
+                    loop = 0
+                    while (algo != 0) {
+                        algo = data.miningAlgorithms[loop].algo;
+                        loop += 1;
+                    }
+                    let NicehashMinsForFlo = data.miningAlgorithms[loop-1]
+                    let NicehashMins = (/RVN/.test(token)) ? (NicehashMinsForRvn) : (NicehashMinsForFlo)
+                    // console.log('NicehashMinsForRvn:', NicehashMinsForRvn, 'NicehashMinsForFlo:', NicehashMinsForFlo)
+                    resolve(NicehashMins);
+                });
+                })
+            .on("error", (error) => {
+                console.log("Error: " + error.message);
+                reject("Error: " + error.message);
+            })
+        })
+      }
+
+      
+
       async function minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration) {
         let BittrexWithdrawalFee = 0.00005;
         let BittrexMinWithdrawal = 0.00015;
-        let nicehashMinRentalCost = 0.002;
+        let NicehashMins = await nicehashMins()
+        
+        // let nicehashMinRentalCost = 0.002;
+        
+        let nicehashMinRentalCost = NicehashMins.min_amount
+        
         let MinPercentFromNHMinAmount = Math.round((nicehashMinRentalCost / (((Networkhashrate * PriceRentalStandard) / 24) * minDuration + nicehashMinRentalCost)) * 1e6 ) / 1e6;
 
         async function MinPercentFromNHMinLimitCalc(props) {

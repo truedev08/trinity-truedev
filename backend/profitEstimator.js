@@ -59,7 +59,6 @@ async function profitsEstimated() {
     await rentalProvider.setup(UserInput)
 
     let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
-      
     let currentRental = await rentalProvider.getcurrentrental(currentCondition)
     //let rewardsBeforeRentalStart = currentCondition.rewardsTotal
     let rewardsBeforeRentalStart = 276298.70399977
@@ -74,6 +73,8 @@ async function profitsEstimated() {
     let NetworkPercent;
     let BestArbitrageCurrentConditions = await rentalProvider.bestarbitragecurrentconditions(NetworkPercent, UserInput, tokensPerBlock, blocksPerHour, currentCondition)
     let minMargin = .10
+    let marketpreference = currentCondition.marketpreferenceKawpow
+    console.log('Rent From:', marketpreference)
     console.table(BestArbitrageCurrentConditions)
     let botStatus = await rentalProvider.botstatus(RentalCompositeStatusCode, RewardsCompositeCode, currentCondition, currentRental, LiveEstimatesFromMining, MinerSubStatusCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode, BestArbitrageCurrentConditions, minMargin)
     //console.log("Include some jibberish: ", botStatus);
