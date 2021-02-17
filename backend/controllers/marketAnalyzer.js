@@ -1,4 +1,5 @@
 const spotProfitOrder = require('./truedevSpotProfitOrder')
+const User = require('../models/user');
 
 async function postAnalyzeRental(req) {
   let activeRental = (await requestActiveRental()).alive;
@@ -8,15 +9,20 @@ async function postAnalyzeRental(req) {
 
   if (activeRental) {
     return
-  } else {
+  } else if (isSpotMode) {
+    // if spotMode = true, continue
     // create post order market analysis
     // call create order route with updated analysis 
   }
 }
 
-async function isSpotProfit () {
-  
+async function isSpotMode() {
+  const userStatus = await User.collection.findOne({}, {sort:{$natural:-1}})
+  spotMode = User.profiles[0].autoRent.mode.spot
+  console.log(spotMode);
+  return spotMode
 }
+
 // if spot profit mode is selected from the front end, the above function should be called and periodically automate rentals
 // after an order has ended, there needs to be a post order analysis to prepare the next profitable rental
 // if analysis shows profitable rental, call create order with new analysis parameters

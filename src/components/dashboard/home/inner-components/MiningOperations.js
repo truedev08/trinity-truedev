@@ -328,10 +328,12 @@ const MiningOperations = (props) => {
                 break;
             case "spot":
                 if (err.autoRent) setError({ autoRent: false })
+                console.log("spot called");
                 setOperations({ ...miningOperations, spot: true, alwaysMineXPercent: false })
                 break;
             case "alwaysMineXPercent":
                 if (err.autoRent) setError({ autoRent: false })
+                console.log("always X percent called");
                 setOperations({ ...miningOperations, alwaysMineXPercent: true, spot: false })
                 break;
             case "autoTrade":

@@ -4,6 +4,7 @@ require("dotenv").config();
 const { default: Axios } = require('axios');
 
 const User = require('./models/user');
+const ProfitEstimates = require('./models/profitEstimates');
 
 const {NH_API_KEY, NH_API_SECRET, NH_ORG_ID} = process.env;
 
@@ -58,8 +59,12 @@ async function profitsEstimated(userSettings) {
   
   let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
   let currentRental = await rentalProvider.getcurrentrental(currentCondition)
-  //let rewardsBeforeRentalStart = currentCondition.rewardsTotal
-  let rewardsBeforeRentalStart = 276298.70399977
+  let rewardsBeforeRentalStart = currentCondition.rewardsTotal
+  //let rewardsBeforeRentalStart = 276298.70399977
+  let profitEstimates = new ProfitEstimates({
+    RewardsBeforeRentalStart: rewardsBeforeRentalStart
+  });
+  await profitEstimates.save()
   let RentalCompositeStatusCode = (currentRental === undefined) ? (9) : (currentRental.RentalCompositeStatusCode)
   let RewardsCompositeCode = (currentCondition === undefined) ? (9) : (currentCondition.RewardsCompositeCode)
   // let LiveEstimatesFromMining = rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)

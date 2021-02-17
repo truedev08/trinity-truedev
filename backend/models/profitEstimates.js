@@ -91,8 +91,11 @@ const profitEstimateSchema = new Schema({
   ExpectedPoolDominanceMultiplier: {
     type: Number,
     default: undefined
+  },
+  RewardsBeforeRentalStart: {
+    type: Number,
+    default: undefined
   }
-
 })
 
 const ProfitEstimates = mongoose.model('profitEstimates', profitEstimateSchema);
