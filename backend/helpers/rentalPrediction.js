@@ -27,7 +27,104 @@ class RentalPrediction {
   }
   */
 
-  output(CurrentConditions, Rental, token, SpartanBotCompositeStatusCode, BestArbitrageCurrentConditions, LiveEstimatesFromMining, sleeptime, botStatusCode, RewardsCompositeCode){
+
+  output(CurrentConditions, Rental, token, SpartanBotCompositeStatusCode, BestArbitrageCurrentConditions, LiveEstimatesFromMining, sleeptime, botStatusCode, workerAddress){
+    let MinerSubStatusCodes = new Array();
+      MinerSubStatusCodes[0] = `Not Currently Mining`;
+      MinerSubStatusCodes[1] = `Currently Mining`;
+      MinerSubStatusCodes[2] = `Not Currently Mining But Mined Recently`;
+      MinerSubStatusCodes[3] = `Address May be Invalid, or Has Not Started Mining Yet`;
+      MinerSubStatusCodes[4] = `Miner ${workerAddress} has never mined before`;
+      MinerSubStatusCodes[9] = `Unknown, Pool is Offline`;
+
+    let RoundSharesSubStatusCodes = new Array();
+      RoundSharesSubStatusCodes[0] = `Do Not Exist at Pool`;
+      RoundSharesSubStatusCodes[1] = `Do Exist at Pool`
+      RoundSharesSubStatusCodes[9] = `Unknown, Pool is Offline`;
+
+    let CandidateBlocksSubStatusCodes = new Array();
+      CandidateBlocksSubStatusCodes[0] = `Have Reached Maturity`;
+      CandidateBlocksSubStatusCodes[1] = `Waiting To Reach Maturity`;
+      CandidateBlocksSubStatusCodes[9] = `Unkown, Pool is Offline`;
+
+    let RentalCompositeStatusCodes = new Array(); 
+      RentalCompositeStatusCodes[0] = `No Active Orders`;
+      RentalCompositeStatusCodes[1] = `Order Active`;
+      RentalCompositeStatusCodes[2] = `Order Ending Soon`;
+      RentalCompositeStatusCodes[3] = `Order Ended`;
+      RentalCompositeStatusCodes[4] = `Order Is Dead, Increase Price`;
+      RentalCompositeStatusCodes[5] = `Order Active but Not Live`;  
+      RentalCompositeStatusCodes[6] = `Unhandled Status, investigate`;
+      RentalCompositeStatusCodes[7] = `New Provider Account, No Previous Orders`
+      RentalCompositeStatusCodes[8] = `Unknown, Pool is Offline`;
+      RentalCompositeStatusCodes[9] = `Provider is Offline`;
+
+    let RewardsCompositeCodes = new Array();
+      RewardsCompositeCodes[0] = `All Rewards Counted`;
+      RewardsCompositeCodes[1] = `Rewards Pending Still`;
+      RewardsCompositeCodes[9] = `Unknown, Pool is Offline`;
+
+    let botStatusCodes = new Array();
+      botStatusCodes[0] = ``;
+      botStatusCodes[1] = `Currently Projected to Surpass Requested Profit Margin`;
+      botStatusCodes[2] = `Currently Projected to be Profitable`;
+      botStatusCodes[3] = `Currently Projected to be Unprofitable`;
+      botStatusCodes[4] = ``;
+      botStatusCodes[6] = `All Rewards Counted, Prepared for Next Rental`;
+
+    let SpartanBotCompositeStatusCodes = new Array();
+
+        SpartanBotCompositeStatusCodes[0] = `No Active Orders`;
+        SpartanBotCompositeStatusCodes[1] = `No Active Orders, Rent Now`;
+        SpartanBotCompositeStatusCodes[2] = `No Active Orders, Rental May Be Recommended`;
+        SpartanBotCompositeStatusCodes[3] = `No Active Orders, Not Recommended`;
+
+        SpartanBotCompositeStatusCodes[101] = `Active Order, Currently Mining, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[102] = `Active Order, Currently Mining, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[103] = `Active Order, Currently Mining, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[111] = `Active Order, Currently Mining, Rewards Pending Still`;
+        SpartanBotCompositeStatusCodes[112] = `Active Order, Currently Mining, Rewards Pending Still`;
+        SpartanBotCompositeStatusCodes[113] = `Active Order, Currently Mining, Rewards Pending Still`;
+
+        SpartanBotCompositeStatusCodes[201] = `Order Ending Soon, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[202] = `Order Ending Soon, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[203] = `Order Ending Soon, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[211] = `Order Ending Soon, Rewards Pending Still`; 
+        SpartanBotCompositeStatusCodes[212] = `Order Ending Soon, Rewards Pending Still`; 
+        SpartanBotCompositeStatusCodes[213] = `Order Ending Soon, Rewards Pending Still`;
+
+        SpartanBotCompositeStatusCodes[301] = `Order Ended Recently, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[302] = `Order Ended Recently, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[303] = `Order Ended Recently, All Rewards Counted`;
+        SpartanBotCompositeStatusCodes[311] = `Order Ended Recently, Rewards Pending Still`;
+        SpartanBotCompositeStatusCodes[312] = `Order Ended Recently, Rewards Pending Still`;
+        SpartanBotCompositeStatusCodes[313] = `Order Ended Recently, Rewards Pending Still`;
+
+        SpartanBotCompositeStatusCodes[306] = `Order Ended Recently, All Rewards Counted`;
+
+        SpartanBotCompositeStatusCodes[402] = `Dead Order, All Rewards Counted, Consider Ending Rental Early`;
+        SpartanBotCompositeStatusCodes[403] = `Dead Order, All Rewards Counted, Recommend Waiting`;
+        SpartanBotCompositeStatusCodes[411] = `Dead Order, Rewards Pending Still; Consider Increasing Price`;
+        SpartanBotCompositeStatusCodes[412] = `Dead Order, Rewards Pending Still; Consider Increasing Price`;
+        SpartanBotCompositeStatusCodes[413] = `Dead Order, Rewards Pending Still; Consider Increasing Price`;  
+
+        SpartanBotCompositeStatusCodes[504] = `Order Active but Not Yet Live, No Rewards Earned Yet`;
+
+        SpartanBotCompositeStatusCodes[701] = `New Rental Provider Account, No Rentals Made Yet, Rental Recommended Highly`;
+        SpartanBotCompositeStatusCodes[702] = `New Rental Provider Account, No Rentals Made Yet, Rental Recommended`;
+        SpartanBotCompositeStatusCodes[703] = `New Rental Provider Account, No Rentals Made Yet, Rental Not Recommended Now`;
+
+        SpartanBotCompositeStatusCodes[899] = `Pool is Offline`;
+        SpartanBotCompositeStatusCodes[908] = `Provider is Offline`;
+
+    let RentalCompositeStatusCode = (Rental === undefined) ? (9) : (Rental.RentalCompositeStatusCode)
+    let RewardsCompositeCode = (CurrentConditions === undefined) ? (9) : (CurrentConditions.RewardsCompositeCode)
+    let MinerSubStatusCode = (CurrentConditions === undefined) ? (9) : (CurrentConditions.MinerSubStatusCode)
+    let RoundSharesSubStatusCode = (CurrentConditions === undefined) ? (9) : (CurrentConditions.RoundSharesSubStatusCode)
+    let CandidateBlocksSubStatusCode = (CurrentConditions === undefined) ? (9) : (CurrentConditions.CandidateBlocksSubStatusCode)
+    
+
+
     let SpartanBotCompositeStatusCodeIndex = (SpartanBotCompositeStatusCode === '000') ? (0) : ((SpartanBotCompositeStatusCode === '001')?(1):((SpartanBotCompositeStatusCode === '002')?(2):((SpartanBotCompositeStatusCode === '003')?(3):(SpartanBotCompositeStatusCode))));
     let SpartanBotStatus = SpartanBotCompositeStatusCodes[SpartanBotCompositeStatusCodeIndex]
     let estTimeRemainingInSec = (RentalCompositeStatusCode >= 7) ? (0) : ((RentalCompositeStatusCode === 3) ? (0) : ((Rental.RentalCompositeStatusCode === 0) ? (0) : ((Rental.RentalOrders.estimateDurationInSeconds === undefined)?(Rental.rentalDuration * 60 * 60):("Unknown")))) 
@@ -88,7 +185,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
         \x1b[5m\x1b[31mUser Balance in Provider Wallet too low for a rental \x1b[0m
@@ -118,7 +215,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -151,7 +248,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
         \x1b[5m\x1b[31mUser Balance in Provider Wallet too low for a rental \x1b[0m
@@ -181,7 +278,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -400,7 +497,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -430,7 +527,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -461,7 +558,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[CurrentConditions.RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CurrentConditions.CandidateBlocksSubStatusCode]}
 
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[CurrentRental.RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[Rental.RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -491,7 +588,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[CurrentConditions.RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CurrentConditions.CandidateBlocksSubStatusCode]}
 
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[CurrentRental.RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[Rental.RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -522,7 +619,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -552,7 +649,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[CurrentConditions.RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CurrentConditions.CandidateBlocksSubStatusCode]}
 
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[CurrentRental.RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[Rental.RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -582,7 +679,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CurrentConditions.CandidateBlocksSubStatusCode]}
         ${CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -612,7 +709,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -642,7 +739,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -673,7 +770,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -704,7 +801,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -735,7 +832,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[CurrentConditions.RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CurrentConditions.CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[CurrentRental.RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[Rental.RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -767,7 +864,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[CurrentRental.RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[Rental.RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
       
@@ -830,7 +927,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -862,7 +959,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -894,7 +991,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -926,7 +1023,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -958,7 +1055,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -990,7 +1087,71 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
+        ${botStatusCode} : ${botStatusCodes[botStatusCode]}
+
+        \x1b[31m\x1b[1m${SpartanBotCompositeStatusCode}\x1b[0m : \x1b[31m\x1b[1m${SpartanBotStatus} ${botStatusCodes[botStatusCode]}\x1b[0m
+      
+        Rental ID: ${Rental.rentalOrderIdReadable} ${Math.round((Rental.rentalPercentComplete)*1e3)/1e1}% Complete\n${rentalPercentCompleteDisplay}
+
+        Estimated Arbitrage Opportunity For Current Rental:
+        Est profit of: \x1b[31m\x1b[1m$${LiveEstimatesFromMining.ProfitUsd} (GPM: ${Math.round((LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt)*1e4)/1e2} %)\x1b[0m, 
+        Rented \x1b[4m${Rental.RentalOrders.limit}\x1b[0m \x1b[4m${CurrentConditions.MarketFactorName}\x1b[0m
+        For \x1b[4m${Rental.rentalDuration}\x1b[0m hours at \x1b[4m${Rental.RentalOrders.price}\x1b[0m BTC/\x1b[4m${CurrentConditions.MarketFactorName}\x1b[0m/Day.
+
+        Estimated Rewards: \x1b[4m${LiveEstimatesFromMining.LiveEstimateQtyOfTokensToBeMined}\x1b[0m \x1b[4m${token}\x1b[0m (${LiveEstimatesFromMining.minedTokens} so far)
+        Cost of Rental: \x1b[4m${Rental.RentalOrders.amount}\x1b[0m BTC (\x1b[4m$${Rental.CostOfRentalInUsd}\x1b[0m)
+        Estimated Rev:  \x1b[4m${LiveEstimatesFromMining.ValueOfEstTokensAtMarketPrice}\x1b[0m BTC (\x1b[4m$${LiveEstimatesFromMining.ValueOfEstTokensAtMktPriceUsd}\x1b[0m) 
+        NetworkPercent: \x1b[4m${Math.round((LiveEstimatesFromMining.actualNetworkPercent)*1e4)/1e2}\x1b[0m %
+        Est PoolWeight: \x1b[4m${CurrentConditions.poolDominanceMultiplier}\x1b[0m
+        Pool is Currently: \x1b[4m${CurrentConditions.currentlyLuckyWords} (${CurrentConditions.luck64rounded})\x1b[0m
+        and Trending: \x1b[4m${CurrentConditions.luckTrend}\x1b[0m
+
+        \x1b[5mNext Update In: ${nextUpdateInSecs} seconds \x1b[0m Rental Ended ${timesincerentalended} minutes ago` 
+        )
+    } else if(SpartanBotCompositeStatusCode === '412'){
+        console.log( //ended, bold red status, bold red profit
+        `${horizontalline}  
+        \x1b[32mSpartanBot Status at ${formattedtime} on ${formatteddate} (${timestamp}):\x1b[0m
+
+        ${CurrentConditions.MinerSubStatusCode} : Miner: ${this.UserInput.nextWorker} is ${MinerSubStatusCodes[MinerSubStatusCode]}
+        ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
+        ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
+      
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
+        ${botStatusCode} : ${botStatusCodes[botStatusCode]}
+
+        \x1b[32m\x1b[1m${SpartanBotCompositeStatusCode}\x1b[0m : \x1b[32m\x1b[1m${SpartanBotStatus} ${botStatusCodes[botStatusCode]}\x1b[0m
+      
+        Rental ID: ${Rental.rentalOrderIdReadable} ${Math.round((Rental.rentalPercentComplete)*1e3)/1e1}% Complete\n${rentalPercentCompleteDisplay}
+
+        Estimated Arbitrage Opportunity For Current Rental:
+        Est profit of: \x1b[32m\x1b[1m$${LiveEstimatesFromMining.ProfitUsd} (GPM: ${Math.round((LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt)*1e4)/1e2} %)\x1b[0m, 
+        Rented \x1b[4m${Rental.RentalOrders.limit}\x1b[0m \x1b[4m${CurrentConditions.MarketFactorName}\x1b[0m
+        For \x1b[4m${Rental.rentalDuration}\x1b[0m hours at \x1b[4m${Rental.RentalOrders.price}\x1b[0m BTC/\x1b[4m${CurrentConditions.MarketFactorName}\x1b[0m/Day.
+
+        Estimated Rewards: \x1b[4m${LiveEstimatesFromMining.LiveEstimateQtyOfTokensToBeMined}\x1b[0m \x1b[4m${token}\x1b[0m (${LiveEstimatesFromMining.minedTokens} so far)
+        Cost of Rental: \x1b[4m${Rental.RentalOrders.amount}\x1b[0m BTC (\x1b[4m$${Rental.CostOfRentalInUsd}\x1b[0m)
+        Estimated Rev:  \x1b[4m${LiveEstimatesFromMining.ValueOfEstTokensAtMarketPrice}\x1b[0m BTC (\x1b[4m$${LiveEstimatesFromMining.ValueOfEstTokensAtMktPriceUsd}\x1b[0m) 
+        NetworkPercent: \x1b[4m${Math.round((LiveEstimatesFromMining.actualNetworkPercent)*1e4)/1e2}\x1b[0m %
+        Est PoolWeight: \x1b[4m${CurrentConditions.poolDominanceMultiplier}\x1b[0m
+        Pool is Currently: \x1b[4m${CurrentConditions.currentlyLuckyWords} (${CurrentConditions.luck64rounded})\x1b[0m
+        and Trending: \x1b[4m${CurrentConditions.luckTrend}\x1b[0m
+
+        \x1b[5mNext Update In: ${nextUpdateInSecs} seconds \x1b[0m Rental Ended ${timesincerentalended} minutes ago` 
+        )
+    } else if(SpartanBotCompositeStatusCode === '413'){
+        console.log( //ended, bold red status, bold red profit
+        `${horizontalline}  
+        \x1b[31mSpartanBot Status at ${formattedtime} on ${formatteddate} (${timestamp}):\x1b[0m
+
+        ${CurrentConditions.MinerSubStatusCode} : Miner: ${this.UserInput.nextWorker} is ${MinerSubStatusCodes[MinerSubStatusCode]}
+        ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
+        ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
+      
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -1022,7 +1183,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[CurrentConditions.RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CurrentConditions.CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[CurrentRental.RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental ${RentalCompositeStatusCodes[Rental.RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -1054,7 +1215,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
         \x1b[5m\x1b[31mUser Balance in Provider Wallet too low for a rental \x1b[0m
@@ -1084,7 +1245,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[CurrentConditions.RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -1117,7 +1278,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
         \x1b[5m\x1b[31mUser Balance in Provider Wallet too low for a rental \x1b[0m
@@ -1147,7 +1308,7 @@ class RentalPrediction {
         ${CurrentConditions.RoundSharesSubStatusCode} : Round Shares ${RoundSharesSubStatusCodes[RoundSharesSubStatusCode]}
         ${CurrentConditions.CandidateBlocksSubStatusCode} : Candidate Blocks: ${CandidateBlocksSubStatusCodes[CandidateBlocksSubStatusCode]}
       
-        ${CurrentRental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
+        ${Rental.RentalCompositeStatusCode} : Rental Provider has ${RentalCompositeStatusCodes[RentalCompositeStatusCode]}
         ${CurrentConditions.RewardsCompositeCode} : ${RewardsCompositeCodes[RewardsCompositeCode]}
         ${botStatusCode} : ${botStatusCodes[botStatusCode]}
 
@@ -1265,8 +1426,14 @@ class RentalPrediction {
       let orderBookScrypt = await this.provider.provider.getOrderBook('SCRYPT')
       let totalSpeedScryptUSA = orderBookScrypt.stats.USA.totalSpeed;
       let totalSpeedScryptEU = orderBookScrypt.stats.EU.totalSpeed;
-      let PriceRentalStandardKawpowUSA = Math.round(( (10000 * summariesKawpowUSA.summaries['USA,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
-      let PriceRentalStandardKawpowEU = Math.round(( (10000 * summariesKawpowEU.summaries['EU,KAWPOW'].payingPrice) + 0.02 )*1e4)/1e4
+
+      let NicehashMins = await nicehashMins()
+      let nicehashMinRentalCost = NicehashMins.min_amount;    
+      let nicehashAlgoDownstep = NicehashMins.down_step;
+
+      let StayCompetitive = - (nicehashAlgoDownstep) * 2
+      let PriceRentalStandardKawpowUSA = Math.round(( (10000 * summariesKawpowUSA.summaries['USA,KAWPOW'].payingPrice) + StayCompetitive )*1e4)/1e4
+      let PriceRentalStandardKawpowEU = Math.round(( (10000 * summariesKawpowEU.summaries['EU,KAWPOW'].payingPrice) + StayCompetitive )*1e4)/1e4
       let PriceRentalStandardScryptUSA = Math.round(( 10000 * summariesScryptUSA.summaries['USA,SCRYPT'].payingPrice )*1e4)/1e4
       let PriceRentalStandardScryptEU = Math.round(( 10000 * summariesScryptEU.summaries['EU,SCRYPT'].payingPrice )*1e4)/1e4
       // console.log('PriceRentalStandardKawpowUSA:', PriceRentalStandardKawpowUSA)
@@ -1555,7 +1722,7 @@ class RentalPrediction {
                         var rewardsBalance = (data.stats.balance === undefined) ? 0 : (data.stats.balance / 1e8)
                         var rewardsPaid = (data.stats.paid === undefined) ? 0 : (data.stats.paid / 1e8)
                         let rewardsCheck = rewardsImmature + rewardsBalance + rewardsPaid                    
-                        let rewardsTotal = (rewardsCheck > 0) ? (rewardsImmature + rewardsBalance + rewardsPaid) : (0)
+                        let rewardsTotal = (rewardsCheck > 0) ? (rewardsCheck) : (0)
                         let earnedRewardsCheck = Math.round((rewardsTotal - rewardsBeforeRental)*1e8)/1e8
                         let earnedRewards = (earnedRewardsCheck > 0) ? (earnedRewardsCheck) : (0)
                         let rewardsStillPending = (data.rewards == null) ? (0) : (data.rewards[0].immature)
@@ -1812,7 +1979,7 @@ class RentalPrediction {
       let MaxPercentFromAvailRigs = (marketpreferenceKawpow === 'EU') ? (totalSpeedKawpowEU * 1 / Networkhashrate) : (totalSpeedKawpowUSA / Networkhashrate)
       let suggestedMinRentalDuration = Math.round((9 / (myPoolShare/100 * blocksPerHour / luck64))*1e3)/1e3
       let MaxPercentFromAvailBal = UsersBalance / (UsersBalance + (suggestedMinRentalDuration * PriceRentalStandard/24 * Networkhashrate))
-      // console.log(MaxPercentFromAvailBal)
+      // console.log('suggestedMinRentalDuration:', suggestedMinRentalDuration)
       let MaxPercent = Math.min(MaxPercentFromAvailBal,MaxPercentFromAvailRigs, .35)
 
       async function calculations(Networkhashrate, PriceRentalStandard, MarketPricePerTokenInBtc, tokensPerBlock, blocksPerHour) {
@@ -1825,11 +1992,61 @@ class RentalPrediction {
       let HourlyMiningCostInBtc = Calculations.HourlyMiningCostInBtc;
       let HourlyMiningValueInBtc = Calculations.HourlyMiningValueInBtc;
 
-      async function minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration) {
+      async function nicehashMins(tokenAlgo) {
+        return await new Promise((resolve, reject) => {
+            https
+            .get(
+                'https://api2.nicehash.com/main/api/v2/public/buy/info',
+                (response) => {
+                    let body = ''
+                    response.on('data', (chunk) => {
+                        body += chunk;
+                    });
+                    response.on('end', () => {
+                    let data = JSON.parse(body)
+                    if(!data) 
+                      console.log('Something wrong with the api or syntax');
+                
+                    // let NicehashMins = data;
+                    let algos = data.miningAlgorithms.length
+                    let algo;
+                    let loop = 0
+                    while (algo != 52) {
+                        algo = data.miningAlgorithms[loop].algo;
+                        loop += 1;
+                    }
+                    let NicehashMinsForRvn = data.miningAlgorithms[loop-1]
+                    loop = 0
+                    while (algo != 0) {
+                        algo = data.miningAlgorithms[loop].algo;
+                        loop += 1;
+                    }
+                    let NicehashMinsForFlo = data.miningAlgorithms[loop-1]
+                    let NicehashMins = (/RVN/.test(token)) ? (NicehashMinsForRvn) : (NicehashMinsForFlo)
+                    // console.log('NicehashMinsForRvn:', NicehashMinsForRvn, 'NicehashMinsForFlo:', NicehashMinsForFlo)
+                    resolve(NicehashMins);
+                });
+                })
+            .on("error", (error) => {
+                console.log("Error: " + error.message);
+                reject("Error: " + error.message);
+            })
+        })
+      }
+
+      
+
+      async function minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration, suggestedMinRentalDuration) {
         let BittrexWithdrawalFee = 0.00005;
         let BittrexMinWithdrawal = 0.00015;
-        let nicehashMinRentalCost = 0.002;
-        let MinPercentFromNHMinAmount = Math.round((nicehashMinRentalCost / (((Networkhashrate * PriceRentalStandard) / 24) * minDuration + nicehashMinRentalCost)) * 1e6 ) / 1e6;
+        let NicehashMins = await nicehashMins()
+        
+        // let nicehashMinRentalCost = 0.002;
+        
+        let nicehashMinRentalCost = NicehashMins.min_amount
+        
+        // console.log('nicehashMinRentalCost:', nicehashMinRentalCost, 'suggestedMinRentalDuration:', suggestedMinRentalDuration)
+        let MinPercentFromNHMinAmount = Math.round((nicehashMinRentalCost / (((Networkhashrate * PriceRentalStandard) / 24) * suggestedMinRentalDuration + nicehashMinRentalCost)) * 1e6 ) / 1e6;
 
         async function MinPercentFromNHMinLimitCalc(props) {
           async function MinPercentFromNHMinLimitKawpow(props) {
@@ -1859,7 +2076,7 @@ class RentalPrediction {
         let MinPercentFromNHMinLimitLoad = await MinPercentFromNHMinLimitCalc();
         let MinPercentFromNHMinLimit = MinPercentFromNHMinLimitLoad.MinPercentFromNHMinLimit;
         let minMargin = 0
-        let MinPercentFromBittrexMinWithdrawal = Math.round((BittrexMinWithdrawal / (BittrexMinWithdrawal + Networkhashrate * PriceRentalStandard * minDuration)) * 1e6) / 1e6;
+        let MinPercentFromBittrexMinWithdrawal = Math.round((BittrexMinWithdrawal / (BittrexMinWithdrawal + Networkhashrate * PriceRentalStandard * suggestedMinRentalDuration)) * 1e6) / 1e6;
         
         let MinimumMinimum = Math.min(
           MinPercentFromNHMinAmount,
@@ -1879,7 +2096,7 @@ class RentalPrediction {
         };
       }
 
-      let Minimums = await minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration);
+      let Minimums = await minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration, suggestedMinRentalDuration);
       let MinPercentFromNHMinAmount = Minimums.MinPercentFromNHMinAmount;
       let MinPercentFromNHMinLimit = Minimums.MinPercentFromNHMinLimit;
       let MinPercentFromBittrexMinWithdrawal = Minimums.MinPercentFromBittrexMinWithdrawal;
@@ -1889,7 +2106,7 @@ class RentalPrediction {
         earnedRewards, rewardsStillPending, roundShares, networkhashps, Networkhashrate, blockheight, MinerSubStatusCode, RewardsCompositeCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode,
         candidateheight, avgBlockTime, PriceUsdPerBtcOnCoinbase, PriceUsdPerBtcOnBittrex, MarketPriceUsdPerBtc, TokenPair, MarketPricePerTokenInBtc, MaxPercent, HourlyMiningCostInBtc, HourlyMiningValueInBtc, 
         MinPercentFromNHMinAmount, MinPercentFromNHMinLimit, MinPercentFromBittrexMinWithdrawal, HighestMinimum, leadingMinerShare, myPoolShare, poolDominanceMultiplier, secondPlaceMinerShare, 
-        luck1024, luck256, luck128, luck64, bestLuck, currentlyLucky, luckTrend, luck64rounded, currentlyLuckyWords, marketpreferenceKawpow, suggestedMinRentalDuration}
+        luck1024, luck256, luck128, luck64, bestLuck, currentlyLucky, luckTrend, luck64rounded, currentlyLuckyWords, marketpreferenceKawpow, suggestedMinRentalDuration, nicehashMinRentalCost, nicehashAlgoDownstep}
 
     }catch(error){
       console.log('provider is down, error:', error)
@@ -2061,6 +2278,9 @@ class RentalPrediction {
     var ExpectedPoolDominanceMultiplierList = new Array();
     let MaxPercentAsInt = CurrentConditions.MaxPercent * 100
     var listOfNetworkPercentValuesToTry = [];
+    // let NicehashMins = await nicehashMins();
+    let nicehashMinRentalCost = CurrentConditions.nicehashMinRentalCost
+    // console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
     for (var i = 1; i <= MaxPercentAsInt; i++) {
     listOfNetworkPercentValuesToTry.push(i/1000);
     }
@@ -2204,7 +2424,8 @@ class RentalPrediction {
   async liveestimatesfrommining(CurrentRental, CurrentConditions, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart) {
     let BittrexWithdrawalFee = 0.00005;
     let BittrexMinWithdrawal = 0.00015;
-    let nicehashMinRentalCost = 0.005;
+    // let nicehashMinRentalCost = 0.005;
+    let nicehashMinRentalCost = CurrentConditions.nicehashMinRentalCost
     let actualNetworkPercent = CurrentRental.actualNetworkPercent
     // console.log('RentalCompositeStatusCode:', CurrentRental.RentalCompositeStatusCode)
     let RentalStatus = (CurrentRental.RentalCompositeStatusCode === 7) ? ('NEWACCOUNT') : ((CurrentRental.RentalCompositeStatusCode === 9)?('UNKNOWN'):(CurrentRental.RentalOrders.status.code))
