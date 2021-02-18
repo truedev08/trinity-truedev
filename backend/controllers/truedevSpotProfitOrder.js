@@ -31,6 +31,7 @@ const createOrder = async(req, res) => {
     console.log("Status Fetching");
     let statusCode = (await requestStatusCode()).botStatusCode;
 
+
     console.log("Setting Body");
 
     // Fix this to listen to user input instead of being 99% hardcoded
@@ -38,6 +39,22 @@ const createOrder = async(req, res) => {
     console.table(req.body);
 
     const currentStatus = await ProfitEstimate.collection.findOne({}, {sort:{$natural:-1}})
+
+    console.log("look at this: ", req.body)
+
+    const body = {
+      //STANDARD | FIXED
+      type: req.body.type,
+      limit: req.body.limit,
+      id: req.body.userId,
+      price: req.body.price,
+      marketFactor: "TH",
+      displayMarketFactor: req.body.displayMarketFactor,
+      amount: req.body.amount,
+      market: "EU",
+      algorithm: "KAWPOW"
+    }
+    /*
 
     const body = {
       //STANDARD | FIXED
@@ -52,6 +69,7 @@ const createOrder = async(req, res) => {
       //market: 'EU',
       algorithm: "KAWPOW"
     }
+    */
 
     // Replace this with a way for a user to pick the specific pool they want to use.
     console.log("Fetching pools");
@@ -66,8 +84,10 @@ const createOrder = async(req, res) => {
     console.log("Fetching active orders");
     let activeRental = (await requestActiveRental(orderId, NiceHashOrder)).alive;
 
+
     statusCode = 1; // Force a rental
     if (!activeRental && (statusCode==1 || statusCode==2)) {
+
       console.log("Creating Order");
       console.table(body)
       orderId = (await NiceHashOrder.createOrder(body)).id
@@ -118,6 +138,7 @@ const requestActiveRental = async (orderId, NiceHashOrder) => {
     let orderDetails = await NiceHashOrder.getOrders("KAWPOW", "USA")
 
     console.log("Order Details", orderDetails.id)
+    console.log("Full: ", orderDetails)
     return orderDetails.id
   } catch (error) {
     console.log(error);

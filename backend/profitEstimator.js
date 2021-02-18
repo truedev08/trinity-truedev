@@ -8,6 +8,10 @@ const ProfitEstimates = require('./models/profitEstimates');
 
 const {NH_API_KEY, NH_API_SECRET, NH_ORG_ID} = process.env;
 
+
+let workerAddress = 'RAXNZ1Rwp2wRf4miqnMALWkKMgFdf5QVRc'; 
+
+
 let settingsNiceHash = { //martin
   type: 'NiceHash',
   api_key: NH_API_KEY,
@@ -42,6 +46,7 @@ function userinput(workerAddress) {
   return { token, tokenAlgo, nextWorker, minDuration, minMargin};
 }
 
+
 async function profitsEstimated(userSettings) {
   let workerAddress = userSettings.address
 
@@ -58,6 +63,7 @@ async function profitsEstimated(userSettings) {
   await rentalProvider.setup(UserInput)
   
   let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
+  console.table(currentCondition)
   let currentRental = await rentalProvider.getcurrentrental(currentCondition)
   let rewardsBeforeRentalStart = currentCondition.rewardsTotal
   //let rewardsBeforeRentalStart = 276298.70399977
@@ -80,13 +86,19 @@ async function profitsEstimated(userSettings) {
   console.log("BestArbitrageCurrentConditions")
   console.table(BestArbitrageCurrentConditions)
   let botStatus = await rentalProvider.botstatus(RentalCompositeStatusCode, RewardsCompositeCode, currentCondition, currentRental, LiveEstimatesFromMining, MinerSubStatusCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode, BestArbitrageCurrentConditions, minMargin)
-
+  let botStatusCode = botStatus.botStatusCode
+  let SpartanBotCompositeStatusCode = "" + RentalCompositeStatusCode + RewardsCompositeCode + botStatusCode
+  // console.log(SpartanBotCompositeStatusCode)
+  let sleeptime = 15*1000
+  let output = await rentalProvider.output(currentCondition, currentRental, token, SpartanBotCompositeStatusCode, BestArbitrageCurrentConditions, LiveEstimatesFromMining, sleeptime, botStatusCode, workerAddress)
+    
   //console.table(res);
   let result = await updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions)
 
   //console.log("ayyy bro");
 
   return result
+
 }
 
 /*
@@ -105,8 +117,6 @@ myPromise().then(res => { console.log(res)}).catch(err => { console.log(error)})
 async function updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions) {
   //const { BotStatusCode, projectedProfitable, projectedAboveUsersMinMargin } = await profitEstimation
   
-  
-
   return { botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions}
 }
 

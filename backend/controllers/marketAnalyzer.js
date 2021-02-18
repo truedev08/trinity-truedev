@@ -28,3 +28,4 @@ async function isSpotMode() {
 // if analysis shows profitable rental, call create order with new analysis parameters
 // analysis rental every 1/2 duration estimate. If 5 or less minutes, check again in time remaing. 
 // once all this is complete, pass in newly updated parameters and create new order
+
