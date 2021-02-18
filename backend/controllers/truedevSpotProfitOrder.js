@@ -10,6 +10,7 @@ const { keys } = require('lodash');
 //const SpotProfitOrder = require('../controllers/truedevSpotProfitOrder')
 
 
+
 const createOrder = async(req, res) => {
   try {
     let orderId;
@@ -26,36 +27,19 @@ const createOrder = async(req, res) => {
 
     console.log("Connecting to nicehash");
     const NiceHashOrder = new NiceHashApi.default({api_key: niceHashKeys.api_key, api_secret: niceHashKeys.api_secret, api_id: niceHashKeys.api_id});
-    
+
 
     console.log("Status Fetching");
     let statusCode = (await requestStatusCode()).botStatusCode;
 
-
     console.log("Setting Body");
 
-    // Fix this to listen to user input instead of being 99% hardcoded
-
-    console.table(req.body);
-
+    
     const currentStatus = await ProfitEstimate.collection.findOne({}, {sort:{$natural:-1}})
 
-    console.log("look at this: ", req.body)
+    console.log(currentStatus)
 
-    const body = {
-      //STANDARD | FIXED
-      type: req.body.type,
-      limit: req.body.limit,
-      id: req.body.userId,
-      price: req.body.price,
-      marketFactor: "TH",
-      displayMarketFactor: req.body.displayMarketFactor,
-      amount: req.body.amount,
-      market: "EU",
-      algorithm: "KAWPOW"
-    }
-    /*
-
+    // Fix this to listen to user input instead of marketFactor being hardcoded
     const body = {
       //STANDARD | FIXED
       type: req.body.type,
@@ -63,13 +47,27 @@ const createOrder = async(req, res) => {
       id: '',
       price: currentStatus.RentalHashPrice,
       marketFactor: 1000000000000,
-      displayMarketFactor: "TH",
-      amount: 0.005,
+      displayMarketFactor: currentStatus.MarketFactorName,
+      amount: currentStatus.CostOfRentalInBtc,
       //amount: req.body.amount,
-      //market: 'EU',
+      market: 'EU',
       algorithm: "KAWPOW"
     }
-    */
+    
+
+    // const body = {
+    //   //STANDARD | FIXED
+    //   type: req.body.type,
+    //   limit: req.body.limit,
+    //   id: req.body.userId,
+    //   price: req.body.price,
+    //   marketFactor: "TH",
+    //   displayMarketFactor: req.body.displayMarketFactor,
+    //   amount: req.body.amount,
+    //   market: "EU",
+    //   algorithm: "KAWPOW"
+    // }
+    
 
     // Replace this with a way for a user to pick the specific pool they want to use.
     console.log("Fetching pools");
@@ -81,13 +79,13 @@ const createOrder = async(req, res) => {
       }
     }
 
+    // console.log(body);
+
     console.log("Fetching active orders");
     let activeRental = (await requestActiveRental(orderId, NiceHashOrder)).alive;
 
-
-    statusCode = 1; // Force a rental
+    // statusCode = 1; // Force a rental
     if (!activeRental && (statusCode==1 || statusCode==2)) {
-
       console.log("Creating Order");
       console.table(body)
       orderId = (await NiceHashOrder.createOrder(body)).id
@@ -101,6 +99,9 @@ const createOrder = async(req, res) => {
     } else {
       console.log("nothing works")
     }
+
+
+    
   } catch (error) {
       console.log(error)
   }

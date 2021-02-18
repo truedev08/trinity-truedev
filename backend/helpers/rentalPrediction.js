@@ -2281,9 +2281,9 @@ class RentalPrediction {
     var listOfNetworkPercentValuesToTry = [];
     // let NicehashMins = await nicehashMins();
     let nicehashMinRentalCost = CurrentConditions.nicehashMinRentalCost
-    // console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
+    console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
     for (var i = 1; i <= MaxPercentAsInt; i++) {
-    listOfNetworkPercentValuesToTry.push(i/1000);
+    listOfNetworkPercentValuesToTry.push(i/400);
     }
     listOfNetworkPercentValuesToTry.forEach(tryListOfNetworkPercentValues);
     
@@ -2427,6 +2427,7 @@ class RentalPrediction {
     let BittrexMinWithdrawal = 0.00015;
     // let nicehashMinRentalCost = 0.005;
     let nicehashMinRentalCost = CurrentConditions.nicehashMinRentalCost
+    // console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
     let actualNetworkPercent = CurrentRental.actualNetworkPercent
     // console.log('RentalCompositeStatusCode:', CurrentRental.RentalCompositeStatusCode)
     let RentalStatus = (CurrentRental.RentalCompositeStatusCode === 7) ? ('NEWACCOUNT') : ((CurrentRental.RentalCompositeStatusCode === 9)?('UNKNOWN'):(CurrentRental.RentalOrders.status.code))
