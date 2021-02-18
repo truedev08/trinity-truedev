@@ -1411,7 +1411,7 @@ class RentalPrediction {
 
   async getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour) {
     let _this = this
-
+    
     try{
       let UsersBalance = await this.provider.provider.getBalance();
       // let UsersBalance = 10;
@@ -1641,7 +1641,7 @@ class RentalPrediction {
                     let avgBlockTime = data.nodes[0].avgBlockTime
                     // let poolluck = data.luck
                     // console.log(data)
-                      resolve({networkhashps, Networkhashrate, Poolhashrate, blockheight, avgBlockTime});
+                    resolve({networkhashps, Networkhashrate, Poolhashrate, blockheight, avgBlockTime});
                   });
                 }
               })
@@ -2039,6 +2039,7 @@ class RentalPrediction {
       async function minimums(token, tokenAlgo, Networkhashrate, marketFactor, networkhashps, PriceRentalStandard, PriceUsdPerBtcOnCoinbase, HourlyMiningValueInBtc, HourlyMiningCostInBtc, minDuration, suggestedMinRentalDuration) {
         let BittrexWithdrawalFee = 0.00005;
         let BittrexMinWithdrawal = 0.00015;
+
         let NicehashMins = await nicehashMins()
         
         // let nicehashMinRentalCost = 0.002;
@@ -2280,9 +2281,9 @@ class RentalPrediction {
     var listOfNetworkPercentValuesToTry = [];
     // let NicehashMins = await nicehashMins();
     let nicehashMinRentalCost = CurrentConditions.nicehashMinRentalCost
-    // console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
+    console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
     for (var i = 1; i <= MaxPercentAsInt; i++) {
-    listOfNetworkPercentValuesToTry.push(i/1000);
+    listOfNetworkPercentValuesToTry.push(i/400);
     }
     listOfNetworkPercentValuesToTry.forEach(tryListOfNetworkPercentValues);
     
@@ -2426,6 +2427,7 @@ class RentalPrediction {
     let BittrexMinWithdrawal = 0.00015;
     // let nicehashMinRentalCost = 0.005;
     let nicehashMinRentalCost = CurrentConditions.nicehashMinRentalCost
+    // console.log('nicehashMinRentalCost:', nicehashMinRentalCost)
     let actualNetworkPercent = CurrentRental.actualNetworkPercent
     // console.log('RentalCompositeStatusCode:', CurrentRental.RentalCompositeStatusCode)
     let RentalStatus = (CurrentRental.RentalCompositeStatusCode === 7) ? ('NEWACCOUNT') : ((CurrentRental.RentalCompositeStatusCode === 9)?('UNKNOWN'):(CurrentRental.RentalOrders.status.code))
@@ -2565,7 +2567,7 @@ class RentalPrediction {
 
     try{
       let UsersRequestedMargin = _this.UserInput.minMargin 
-      // console.table(LiveEstimatesFromMining)
+      //console.table(LiveEstimatesFromMining)
       let currentlyProfitable = (LiveEstimatesFromMining === undefined) ? (false) : (LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt > 0)
       let currentlyAboveUsersMinMargin = (LiveEstimatesFromMining === undefined) ? (false) : (LiveEstimatesFromMining.SpartanMerchantArbitragePrcnt > _this.UserInput.minMargin)
       if (RentalCompositeStatusCode === 0) { // no rental
@@ -2586,7 +2588,7 @@ class RentalPrediction {
           if (RentalCompositeStatusCode === 7) {
             let projectedProfitable = (BestArbitrageCurrentConditions === undefined) ? (false) : (BestArbitrageCurrentConditions.ProjectedProfitMargin > 0)
             let projectedAboveUsersMinMargin = (BestArbitrageCurrentConditions === undefined) ? (false) : (BestArbitrageCurrentConditions.ProjectedProfitMargin > minMargin)    
-            let botStatusCode = (projectedProfitable) ? ( (projectedAboveUsersMinMargin) ? (1):(2)) : (3)
+            let botStatusCode = (projectedProfitable) ? ( (projectedAboveUsersMinMargin) ? (1):(2)):(3)
             console.log(RentalCompositeStatusCode, RewardsCompositeCode, botStatusCode)
             return {botStatusCode, projectedProfitable, projectedAboveUsersMinMargin}   
           }
@@ -2621,7 +2623,7 @@ class RentalPrediction {
           // let TimeSinceRentalEnded = CurrentTime - RentalEndTime
           // let StopMonitoringForRewardsLimit = CurrentRental.StopMonitoringForRewardsLimit
           let botStatusCode = (RewardsCompositeCode === 1) ? ((currentlyProfitable)?((currentlyAboveUsersMinMargin)?(1):(2)):(3)) : ((RewardsCompositeCode === 0)?((StopMonitoringForRewardsLimit < TimeSinceRentalEnded)?(6):((currentlyProfitable)?((currentlyAboveUsersMinMargin)?(1):(2)):(3))):('error'))
-            console.log(RentalCompositeStatusCode, RewardsCompositeCode, botStatusCode)
+          console.log(RentalCompositeStatusCode, RewardsCompositeCode, botStatusCode)
           return {botStatusCode, RewardsCompositeCode , currentlyProfitable, currentlyAboveUsersMinMargin, RentalEndTime, StopMonitoringForRewardsLimit}
         }
       }

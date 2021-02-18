@@ -100,13 +100,11 @@ const profitEstimateSchema = new Schema({
     type: Number,
     default: undefined
   },
-  RewardsBeforeRental: {
+
+  RewardsBeforeRentalStart: {
     type: Number,
-    default: undefined,
-  }, 
-  RewardsTotal: {
-    type: Number,
-    deafult: undefined
+    default: undefined
+
   }
 })
 
