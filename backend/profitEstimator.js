@@ -4,10 +4,13 @@ require("dotenv").config();
 const { default: Axios } = require('axios');
 
 const User = require('./models/user');
+const ProfitEstimates = require('./models/profitEstimates');
 
 const {NH_API_KEY, NH_API_SECRET, NH_ORG_ID} = process.env;
 
-let workerAddress = 'RAXNZ1Rwp2wRf4miqnMALWkKMgFdf5QVRc'; //TrueDevs RVN worker
+
+let workerAddress = 'RAXNZ1Rwp2wRf4miqnMALWkKMgFdf5QVRc'; 
+
 
 let settingsNiceHash = { //martin
   type: 'NiceHash',
@@ -25,14 +28,6 @@ let settingsMRR = {
   name: 'MiningRigRentals'
 };
 
-let userInput = {
-  token: 'RVN',
-  tokenAlgo: 'KAWPOW',
-  nextWorker: workerAddress,
-  minDuration: .5,  // this should be a user setting (not in the main interface)
-  minMargin: .10
-}
-
 //let rentalProvider = new RentalProvider();
 
 let token = "RVN"
@@ -41,9 +36,7 @@ let minDuration = 60
 let tokensPerBlock = 5000
 let blocksPerHour = 60
 
-let rentalProvider = new RentalProvider(settingsNiceHash);
-
-function userinput() {
+function userinput(workerAddress) {
   let token = 'RVN';
   let tokenAlgo = 'KAWPOW';
   let nextWorker = workerAddress
@@ -53,43 +46,59 @@ function userinput() {
   return { token, tokenAlgo, nextWorker, minDuration, minMargin};
 }
 
-let UserInput = userinput();
 
-async function profitsEstimated() {
-    await rentalProvider.setup(UserInput)
+async function profitsEstimated(userSettings) {
+  let workerAddress = userSettings.address
 
-    let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
-    console.table(currentCondition)
-    let currentRental = await rentalProvider.getcurrentrental(currentCondition)
-    // console.table(currentRental)
-    //let rewardsBeforeRentalStart = currentCondition.rewardsTotal
-    let rewardsBeforeRentalStart = 15008.0535
-    // let NicehashMins = currentCondition.NicehashMins
-    let RentalCompositeStatusCode = (currentRental === undefined) ? (9) : (currentRental.RentalCompositeStatusCode)
-    let RewardsCompositeCode = (currentCondition === undefined) ? (9) : (currentCondition.RewardsCompositeCode)
-    // let LiveEstimatesFromMining = rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)
-    let LiveEstimatesFromMining = await rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)
-    console.table(LiveEstimatesFromMining)
-    let MinerSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.MinerSubStatusCode)
-    let RoundSharesSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.RoundSharesSubStatusCode)
-    let CandidateBlocksSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.CandidateBlocksSubStatusCode)
-    let NetworkPercent;
-    let BestArbitrageCurrentConditions = await rentalProvider.bestarbitragecurrentconditions(NetworkPercent, UserInput, tokensPerBlock, blocksPerHour, currentCondition)
-    let minMargin = .10
-    let marketpreference = currentCondition.marketpreferenceKawpow
-    console.table(BestArbitrageCurrentConditions)
-    let botStatus = await rentalProvider.botstatus(RentalCompositeStatusCode, RewardsCompositeCode, currentCondition, currentRental, LiveEstimatesFromMining, MinerSubStatusCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode, BestArbitrageCurrentConditions, minMargin)
-    //console.log("Include some jibberish: ", botStatus);
-    let botStatusCode = botStatus.botStatusCode
-    let SpartanBotCompositeStatusCode = "" + RentalCompositeStatusCode + RewardsCompositeCode + botStatusCode
-    // console.log(SpartanBotCompositeStatusCode)
-    let sleeptime = 15*1000
-    let output = await rentalProvider.output(currentCondition, currentRental, token, SpartanBotCompositeStatusCode, BestArbitrageCurrentConditions, LiveEstimatesFromMining, sleeptime, botStatusCode, workerAddress)
-    // console.log(output)
-    //console.table(res);
-    let result = await updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions)
+  let rentalProvider = new RentalProvider({
+    type: 'NiceHash',
+    api_key: userSettings.niceHashKeys.api_key,
+    api_secret: userSettings.niceHashKeys.api_secret,
+    api_id: userSettings.niceHashKeys.api_id,
+    name: 'NiceHash'
+  });
 
-    return result
+  // Nicehash knows the worker address for a specific pool. Consider using that?
+  let UserInput = userinput(workerAddress)
+  await rentalProvider.setup(UserInput)
+  
+  let currentCondition = await rentalProvider.getcurrentconditions(token, tokenAlgo, minDuration, tokensPerBlock, blocksPerHour)
+  console.table(currentCondition)
+  let currentRental = await rentalProvider.getcurrentrental(currentCondition)
+  let rewardsBeforeRentalStart = currentCondition.rewardsTotal
+  //let rewardsBeforeRentalStart = 276298.70399977
+  let profitEstimates = new ProfitEstimates({
+    RewardsBeforeRentalStart: rewardsBeforeRentalStart
+  });
+  await profitEstimates.save()
+  let RentalCompositeStatusCode = (currentRental === undefined) ? (9) : (currentRental.RentalCompositeStatusCode)
+  let RewardsCompositeCode = (currentCondition === undefined) ? (9) : (currentCondition.RewardsCompositeCode)
+  // let LiveEstimatesFromMining = rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)
+  let LiveEstimatesFromMining = await rentalProvider.liveestimatesfrommining(currentRental, currentCondition, UserInput, tokensPerBlock, blocksPerHour, rewardsBeforeRentalStart)
+  console.log("LiveEstimatesFromMining")
+  console.table(LiveEstimatesFromMining)
+  let MinerSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.MinerSubStatusCode)
+  let RoundSharesSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.RoundSharesSubStatusCode)
+  let CandidateBlocksSubStatusCode = (currentCondition === undefined) ? (9) : (currentCondition.CandidateBlocksSubStatusCode)
+  let NetworkPercent;
+  let BestArbitrageCurrentConditions = await rentalProvider.bestarbitragecurrentconditions(NetworkPercent, UserInput, tokensPerBlock, blocksPerHour, currentCondition)
+  let minMargin = .10
+  console.log("BestArbitrageCurrentConditions")
+  console.table(BestArbitrageCurrentConditions)
+  let botStatus = await rentalProvider.botstatus(RentalCompositeStatusCode, RewardsCompositeCode, currentCondition, currentRental, LiveEstimatesFromMining, MinerSubStatusCode, RoundSharesSubStatusCode, CandidateBlocksSubStatusCode, BestArbitrageCurrentConditions, minMargin)
+  let botStatusCode = botStatus.botStatusCode
+  let SpartanBotCompositeStatusCode = "" + RentalCompositeStatusCode + RewardsCompositeCode + botStatusCode
+  // console.log(SpartanBotCompositeStatusCode)
+  let sleeptime = 15*1000
+  let output = await rentalProvider.output(currentCondition, currentRental, token, SpartanBotCompositeStatusCode, BestArbitrageCurrentConditions, LiveEstimatesFromMining, sleeptime, botStatusCode, workerAddress)
+    
+  //console.table(res);
+  let result = await updateModelWithProfitEstimate(botStatus, LiveEstimatesFromMining, BestArbitrageCurrentConditions)
+
+  //console.log("ayyy bro");
+
+  return result
+
 }
 
 /*
