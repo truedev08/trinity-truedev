@@ -9,4 +9,6 @@ router.post('/createOrder', SpotProfitOrder.createOrder)
 
 router.post('/cancelOrder', SpotProfitOrder.cancelOrder)
 
+router.get('/requestConditions', SpotProfitOrder.requestConditions)
+
 module.exports = router;

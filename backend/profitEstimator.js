@@ -89,6 +89,10 @@ async function profitsEstimated(userSettings) {
   let botStatusCode = botStatus.botStatusCode
   let SpartanBotCompositeStatusCode = "" + RentalCompositeStatusCode + RewardsCompositeCode + botStatusCode
   // console.log(SpartanBotCompositeStatusCode)
+  let profitEstimates = new ProfitEstimates({
+    SpartanBotCompositeStatusCode: SpartanBotCompositeStatusCode
+  });
+  await profitEstimates.save()
   let sleeptime = 15*1000
   let output = await rentalProvider.output(currentCondition, currentRental, token, SpartanBotCompositeStatusCode, BestArbitrageCurrentConditions, LiveEstimatesFromMining, sleeptime, botStatusCode, workerAddress)
     

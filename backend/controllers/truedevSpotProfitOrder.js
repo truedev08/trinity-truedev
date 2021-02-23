@@ -50,7 +50,7 @@ const createOrder = async(req, res) => {
       displayMarketFactor: currentStatus.MarketFactorName,
       amount: currentStatus.CostOfRentalInBtc,
       //amount: req.body.amount,
-      market: 'EU',
+      market: 'USA',
       algorithm: "KAWPOW"
     }
     
@@ -84,7 +84,7 @@ const createOrder = async(req, res) => {
     console.log("Fetching active orders");
     let activeRental = (await requestActiveRental(orderId, NiceHashOrder)).alive;
 
-    // statusCode = 1; // Force a rental
+    statusCode = 1; // Force a rental
     if (!activeRental && (statusCode==1 || statusCode==2)) {
       console.log("Creating Order");
       console.table(body)
@@ -126,6 +126,17 @@ const requestStatusCode = async () => {
   }
 }
 
+const requestConditions = async () => {
+  try {
+    const currentCondition = await ProfitEstimate.collection.findOne({}, {sort:{$natural:-1}})
+    console.log("Current Composite Bot Status", currentBotStatus.SpartanBotCompositeStatusCode)
+    return currentCondition.SpartanBotCompositeStatusCode
+  } catch (error) {
+    console.log(error);
+    return {SpartanBotCompositeStatusCode: 0}
+  }
+}
+
 const requestActiveRental = async (orderId, NiceHashOrder) => {
   console.log("Order ID", orderId);
   /*
@@ -147,4 +158,4 @@ const requestActiveRental = async (orderId, NiceHashOrder) => {
   }
 }
 
-module.exports = { createOrder, cancelOrder }
+module.exports = { createOrder, cancelOrder, requestConditions }

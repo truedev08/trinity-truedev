@@ -252,6 +252,23 @@ const MiningOperations = (props) => {
         });
     }
 
+    const requestConditions = async () => {
+        fetch(API_URL + '/truedevSpotProfitOrder/requestConditions', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify(options)
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            console.log('SpartanBotCompositeStatusCode:', data)
+        }).catch((err) => {
+            console.log(err)
+        });
+    }
+
     // When slider is clicked to switch it checks to make sure inputs have values in them first.
     const checkInputsAndRent = (e, slider) => {
         let profile = {}

@@ -24,6 +24,10 @@ const profitEstimateSchema = new Schema({
     type: Number,
     default: undefined
   },
+  SpartanBotCompositeStatusCode: {
+    type: Number,
+    default: undefined
+  },
   projectedProfitable: {
       type: Boolean,
       default: undefined
@@ -100,11 +104,9 @@ const profitEstimateSchema = new Schema({
     type: Number,
     default: undefined
   },
-
   RewardsBeforeRentalStart: {
     type: Number,
     default: undefined
-
   }
 })
 
